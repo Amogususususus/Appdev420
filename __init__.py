@@ -20,49 +20,6 @@ def create_Syrup():
     if request.method == 'POST' and Create_Syrup_form.validate():
         syrups_dict = {}
         db = shelve.open('syrup.db', 'c')
-
-        try:
-            if 'Syrups' in db:
-                syrups_dict = db['Syrups']
-            else:
-                db['Syrups'] = syrups_dict
-        except:
-
-            print("Error in retrieving Syrups from customer.db.")
-
-        syrup = templates.Syrup.Syrup(Create_Syrup_form.Medication_name.data, Create_Syrup_form.Price_Medication.data,
-                                      Create_Syrup_form.Stock_Medication.data,
-                                      Create_Syrup_form.Size.data, Create_Syrup_form.Description_Medication.data, Create_Syrup_form.Picture.data)
-
-        syrups_dict[syrup.get_id()] = syrup
-        db['Syrups'] = syrups_dict
-
-        db.close()
-
-
-    return render_template('Medication_Management.html', form=Create_Syrup_form)
-
-@app.route('/retrieveSyrup', methods=['GET', 'POST'])
-def retrieve_Syrup():
-    syrups_dict = {}
-    db = shelve.open('syrup.db', 'c')
-    try:
-        if 'Syrups' in db:
-            syrups_dict = db['Syrups']
-        else:
-            db['Syrups'] = syrups_dict
-    except:
-        print('Error')
-
-    syrups_list = []
-    for key in syrups_dict:
-        syrup = syrups_dict.get(key)
-        syrups_list.append(syrup)
-
-    Create_Syrup_form = CreateSyrupForm(request.form)
-    if request.method == 'POST' and Create_Syrup_form.validate():
-        syrups_dict = {}
-        db = shelve.open('syrup.db', 'c')
         try:
             if 'Syrups' in db:
                 syrups_dict = db['Syrups']
@@ -70,7 +27,10 @@ def retrieve_Syrup():
                 db['Syrups'] = syrups_dict
         except:
             print('Error')
-
+        syrups_list = []
+        for key in syrups_dict:
+            syrup = syrups_dict.get(key)
+            syrups_list.append(syrup)
         if len(syrups_dict) == 0:
             syrup = templates.Syrup.Syrup(Create_Syrup_form.Medication_name.data, Create_Syrup_form.Price_Medication.data,
                                     Create_Syrup_form.Stock_Medication.data,
@@ -86,14 +46,37 @@ def retrieve_Syrup():
         db['Syrups'] = syrups_dict
 
         return redirect (url_for('retrieve_Syrup'))
+
+    return render_template('Medication_Management.html', form=Create_Syrup_form)
+
+@app.route('/retrieveSyrup')
+def retrieve_Syrup():
+    syrups_dict = {}
+    db = shelve.open('syrup.db', 'r')
+    try:
+        if 'Syrups' in db:
+            syrups_dict = db['Syrups']
+        else:
+            db['Syrups'] = syrups_dict
+    except:
+        print('Error')
+
+    syrups_list = []
+    for key in syrups_dict:
+        syrup = syrups_dict.get(key)
+        syrups_list.append(syrup)
+
+    Create_Syrup_form = CreateSyrupForm(request.form)
+    if request.method == 'POST' and Create_Syrup_form.validate():
+        return redirect (url_for('retrieve_Syrup'))
     return render_template('retrieveSyrup.html',count=len(syrups_list), syrups_list=syrups_list, form=Create_Syrup_form)
 
-@app.route('/retrieveSyrup/<int:id>/', methods=['GET', 'POST'])
+@app.route('/UpdatingSyrups/<int:id>/', methods=['GET', 'POST'])
 def update_Syrup(id):
     Update_Syrup_form = CreateSyrupForm(request.form)
     if request.method == 'POST' and Update_Syrup_form.validate():
         syrups_dict = {}
-        db = shelve.open('Syrup.db', 'w')
+        db = shelve.open('syrup.db', 'w')
         syrups_dict = db['Syrups']
         syrup = syrups_dict.get(id)
         syrup.set_name(Update_Syrup_form.Medication_name.data)
@@ -117,7 +100,7 @@ def update_Syrup(id):
         Update_Syrup_form.Size.data = syrup.get_Volume()
         Update_Syrup_form.Picture.data = syrup.get_Picture()
         Update_Syrup_form.Description_Medication.data = syrup.get_Description()
-        return render_template('retrieveSyrup.html', form=Update_Syrup_form)
+        return render_template('UpdatingSyrups.html', form=Update_Syrup_form)
 
 @app.route('/delete_syrups/<int:id>', methods=['POST'])
 def delete_syrup(id):
