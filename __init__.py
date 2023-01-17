@@ -1,9 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for
+from werkzeug.utils import secure_filename
+import os
 from templates.forms import CreateSyrupForm
 import shelve
 import templates.Syrup
 
 app = Flask(__name__)
+app.secret_key = 'adsasdwqdwqdwuqdubuqvud'
+UPLOAD_FOLDER = 'static/image'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/')
 def home():
@@ -32,15 +37,21 @@ def create_Syrup():
             syrup = syrups_dict.get(key)
             syrups_list.append(syrup)
         if len(syrups_dict) == 0:
+            file = Create_Syrup_form.Picture.data
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             syrup = templates.Syrup.Syrup(Create_Syrup_form.Medication_name.data, Create_Syrup_form.Price_Medication.data,
                                     Create_Syrup_form.Stock_Medication.data,
-                                    Create_Syrup_form.Size.data, Create_Syrup_form.Description_Medication.data, Create_Syrup_form.Picture.data,len(syrups_dict))
+                                    Create_Syrup_form.Size.data, Create_Syrup_form.Description_Medication.data, filename, len(syrups_dict))
 
         else:
             last_object = syrups_list[-1]
+            file = Create_Syrup_form.Picture.data
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             syrup = templates.Syrup.Syrup(Create_Syrup_form.Medication_name.data, Create_Syrup_form.Price_Medication.data,
                         Create_Syrup_form.Stock_Medication.data,
-                        Create_Syrup_form.Size.data, Create_Syrup_form.Description_Medication.data, Create_Syrup_form.Picture.data, last_object.get_id())
+                        Create_Syrup_form.Size.data, Create_Syrup_form.Description_Medication.data, filename, last_object.get_id())
 
         syrups_dict[syrup.get_id()] = syrup
         db['Syrups'] = syrups_dict
