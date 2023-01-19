@@ -5,9 +5,10 @@ from templates.forms import CreateSyrupForm
 import shelve
 import templates.Syrup
 
+
 app = Flask(__name__)
 app.secret_key = 'adsasdwqdwqdwuqdubuqvud'
-UPLOAD_FOLDER = 'static/image'
+UPLOAD_FOLDER = '../static/image'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/')
@@ -18,6 +19,7 @@ def home():
 @app.route('/contactUs')
 def contact_us():
     return render_template('Contact.html')
+
 
 @app.route('/Medication_Management', methods=['GET', 'POST'])
 def create_Syrup():
@@ -32,10 +34,12 @@ def create_Syrup():
                 db['Syrups'] = syrups_dict
         except:
             print('Error')
+
         syrups_list = []
         for key in syrups_dict:
             syrup = syrups_dict.get(key)
             syrups_list.append(syrup)
+
         if len(syrups_dict) == 0:
             file = Create_Syrup_form.Picture.data
             filename = secure_filename(file.filename)
