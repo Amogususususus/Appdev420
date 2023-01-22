@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Update Account{% endblock %}
+
+{% block content %}
+{% from "includes/_formHelper.html" import render_field %}
+
+          <br>
+          <br>
+          <br>
+		  <br>
+<h1 class="display-4 text-center mt-4 mb-4">Update Accounts</h1>
+
+<section class="container-fluid " style="height: 805px; width: 30%; border-style:solid;">
+  <form method="POST" action="">
+  <div class="form-group">
+    {{ render_field(form.name, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.gender, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.nric, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.email, class="form-control") }}
+  </div>
+<div class="form-group">
+  {{ render_field(form.password, class="form-control") }}
+</div>
+  <div class="form-group">
+    {{ render_field(form.age, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.address, class="form-control") }}
+  </div>
+
+  <div id="prof">
+    <div class="form-group">
+      {{ render_field(form.condition, class="form-control") }}
+    </div>
+  </div>
+  <input type="submit" value="Submit" class="btn btn-primary mt-2 "/>
+</form>
+</section>
+<br>
+<br>
+<br>
+<br>
+{% endblock %}
+
+

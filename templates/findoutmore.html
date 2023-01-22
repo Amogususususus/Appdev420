@@ -1,0 +1,89 @@
+{% extends "home_index.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="static/css/findoutmore.css">
+<!DOCTYPE html>
+<html>
+<head>
+	<title>About Us Section</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
+	<link rel="stylesheet" type="text/css" href="findoutmore.css">
+
+</head>
+<nav class="navbar navbar-expand-md navbar-light fixed-top bg-white ">
+    <a class="navbar-brand" href="#"><img src="https://cdn.discordapp.com/attachments/824290507848024097/1055927102387519569/image.png" class="img-fluid" alt="Responsive image" style="width:4em;height:4em;"></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">About Us</a>
+        </li>
+        <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Our Services
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="#">Primary Care</a>
+          <a class="dropdown-item" href="#">Pediatrics</a>
+          <a class="dropdown-item" href="#">Dermatology</a>
+          <a class="dropdown-item" href="#">Nutrition</a>
+          <a class="dropdown-item" href="#"><div class="c-list">Sexual Health</div></a>
+        </div>
+      </li>
+      <li>
+        <form class="form-inline mt-2 mt-md-0">
+          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" style="width:45em;">
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+      </li>
+
+    </ul>
+
+      <button type="button" class="btn btn-outline-success text-decoration:none"><a href="{{url_for('create_customer')}}">Register</a></button>
+      <div class="pr-2"></div>
+      <button type="button" class="btn btn-outline-success text-decoration:none"><a href="{{url_for('login')}}">Sign In</a></button>
+    </div>
+  </nav>
+
+<body>
+          <br>
+          <br>
+          <br>
+		  <br>
+	<div class="section">
+		<div class="container">
+			<div class="content-section">
+				<div class="title">
+					<h1>About Us</h1>
+				</div>
+				<div class="content">
+					<h3>TeleDoc is a Telemedicine Website that connects patients with doctors from all around the world</h3>
+					<p>Get answers to your health questions with our fast, convenient healthcare—anytime, anywhere.</p>
+					<div class="button">
+						<a href="">Our Services</a>
+					</div>
+				</div>
+				<div class="social">
+					<a href=""><i class="fab fa-facebook-f"></i></a>
+					<a href=""><i class="fab fa-twitter"></i></a>
+					<a href=""><i class="fab fa-instagram"></i></a>
+				</div>
+			</div>
+			<div class="image-section">
+				<img src="static/image/doc.jpg">
+			</div>
+		</div>
+	</div>
+
+	
+</body>
+</html>
+{% endblock %}
