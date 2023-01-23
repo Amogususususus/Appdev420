@@ -1,4 +1,4 @@
-{% extends "Base.html" %}
+{% extends "anotherform.html" %}
 {% block title %}Library Loan System - Home{% endblock %}
 {% block content %}
           <br>
@@ -6,13 +6,14 @@
           <br>
 		  <br>
           <br>
-
+    <h3 style="text-align:center;">Please only Upload in 'jpg', 'png', 'jpeg', 'gif', 'webp' File format.</h3>
     <meta charset="UTF-8">
     <title>Title</title>
-
-    <form method='POST' enctype='multipart/form-data'>
+<div class="cards7 bg-light">
+    <form method='POST' enctype='multipart/form-data' style="text-align:center;">
         {{form.hidden_tag()}}
         {{form.file()}}
         {{form.submit()}}
     </form>
+    </div>
 {% endblock %}

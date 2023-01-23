@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "formbg.html" %}
 {% block title %}Update Account{% endblock %}
 
 {% block content %}
@@ -10,7 +10,7 @@
 		  <br>
 <h1 class="display-4 text-center mt-4 mb-4">Update Accounts</h1>
 
-<section class="container-fluid " style="height: 805px; width: 30%; border-style:solid;">
+<section class="container-fluid " style="height: 650px; width: 30%; border-style:solid;">
   <form method="POST" action="">
   <div class="form-group">
     {{ render_field(form.name, class="form-control") }}

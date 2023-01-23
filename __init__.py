@@ -2,13 +2,16 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.utils import secure_filename
 import os
 from Medication_forms import CreateSyrupForm
-import shelve, Customer
+import Customer
 import Syrup
 from flask_wtf import FlaskForm
 from wtforms import SubmitField
 from flask_wtf.file import FileField, FileAllowed, FileRequired
-from Forms import *
-
+from Account_Form import *
+from Meeting_Form import AppointmentForm
+import Appointment
+from Forms2 import CreateFeedbackForm
+import shelve, Feedback
 
 app = Flask(__name__)
 app.secret_key = "123789123803ghj127891237831asd27891237892qwe3423423434234423234"
@@ -17,16 +20,24 @@ app.config['SECRET_KEY'] = 'supersecretkey'
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+################################here begins Alan's code#################################
+
 class UploadFileForm(FlaskForm):
-    file = FileField("File", validators=[FileRequired(), FileAllowed(['jpg', 'png', 'jpeg', 'gif', 'webp'], message='File Not Allowed')])
+    file = FileField("File", validators=[FileRequired(), FileAllowed(['jpg', 'png', 'jpeg', 'gif', 'webp'], 'File Not Allowed')])
     submit = SubmitField("Upload File")
 
 @app.route('/')
 def home():
 
     return render_template('home.html')
+@app.route('/User_Homepage')
+def User_Homepage():
 
+    return render_template('User_Homepage.html')
+@app.route('/findoutmore')
+def findoutmore():
 
+    return render_template('findoutmore.html')
 
 @app.route('/Upload_Files/<int:id>/' ,methods=['GET','POST'])
 def Upload_Files(id):
@@ -164,12 +175,9 @@ def delete_syrup(id):
 
     return redirect(url_for('retrieve_Syrup'))
 
-if __name__ == '__main__':
-    app.run(debug=True)
+###########################This is where Alan's code ends###########################
 
-#This is where Alan's code ends
-
-#Thisis where Benson's code begins
+##########################This is where Benson's code begins########################
 
 @app.route('/findoutmore.html')
 def aboutus():
@@ -193,13 +201,13 @@ def login():
 
         if login_form.email.data == "admin@mail.com" and login_form.password.data == "Iloveappdev":
             session["Admin"] = login_form.email.data
-            return redirect(url_for('retrieve_customers'))
+            return redirect(url_for('retrieve_appointments_admin'))
         else:
             for key in customers_dict:
                 if login_form.email.data == customers_dict[key].get_email():
                     session['NRIC'] = customers_dict[key].get_nric()
                     session.pop('Admin',None)
-                    return redirect(url_for('home')) #change home to booking form
+                    return redirect(url_for('User_Homepage')) #change home to booking form
 
     return render_template('login.html', form=login_form)
 
@@ -241,10 +249,10 @@ def retrieve_customers():
     customers_dict = {}
     db = shelve.open('customer.db', 'r')
     try:
-        if 'Syrups' in db:
-            customers_dict = db['Syrups']
+        if 'Customers' in db:
+            customers_dict = db['Customers']
         else:
-            db['Syrups'] = customers_dict
+            db['Customers'] = customers_dict
     except:
         print('Error')
 
@@ -312,5 +320,303 @@ def delete_customer(id):
 
     return redirect(url_for('retrieve_customers'))
 
+###############This is where Benson's code ends###################################
+
+####################This is where Isaac's code begins#######################################
+
+@app.route('/createAppointment', methods=['GET', 'POST'])
+def create_appointment():
+    create_appointment_form = AppointmentForm(request.form)
+    if request.method == 'POST' and create_appointment_form.validate():
+        appointments_dict = {}
+        db = shelve.open('appointment.db', 'c')
+
+        try:
+            if 'Appointments' in db:
+                appointments_dict = db['Appointments']
+            else:
+                db['Appointments'] = appointments_dict
+
+        except:
+            print("Error in retrieving Appointments from appointment.db.")
+
+        appointments_list = []
+        for key in appointments_dict:
+            appointment = appointments_dict.get(key)
+            appointments_list.append(appointment)
+
+        if len(appointments_dict) == 0:
+            appointment = Appointment.Appointment(create_appointment_form.name_ment.data,
+                                                  create_appointment_form.age_ment.data,
+                                                  create_appointment_form.gender_ment.data,
+                                                  create_appointment_form.nric_ment.data,
+                                                  create_appointment_form.email_ment.data,
+                                                  create_appointment_form.address_ment.data,
+                                                  create_appointment_form.remarks_ment.data,
+                                                  create_appointment_form.past_condition_ment.data,
+                                                  create_appointment_form.doctor_ment.data,
+                                                  create_appointment_form.date_ment.data,
+                                                  create_appointment_form.time_ment.data,
+                                                  len(appointments_dict))
+
+        else:
+            last_object = appointments_list[-1]
+            appointment = Appointment.Appointment(create_appointment_form.name_ment.data,
+                                                  create_appointment_form.age_ment.data,
+                                                  create_appointment_form.gender_ment.data,
+                                                  create_appointment_form.nric_ment.data,
+                                                  create_appointment_form.email_ment.data,
+                                                  create_appointment_form.address_ment.data,
+                                                  create_appointment_form.remarks_ment.data,
+                                                  create_appointment_form.past_condition_ment.data,
+                                                  create_appointment_form.doctor_ment.data,
+                                                  create_appointment_form.date_ment.data,
+                                                  create_appointment_form.time_ment.data,
+                                                  last_object.get_id())
+
+        appointments_dict[appointment.get_id()] = appointment
+        db['Appointments'] = appointments_dict
+
+        db.close()
+
+        return redirect(url_for('retrieve_appointments'))
+    return render_template('createAppointment.html', form=create_appointment_form)
+
+@app.route('/retrieveAppointments')
+def retrieve_appointments():
+    appointments_dict = {}
+    db = shelve.open('appointment.db', 'r')
+    try:
+        if 'Appointments' in db:
+            appointments_dict = db['Appointments']
+        else:
+            db['Appointments'] = appointments_dict
+    except:
+        print('Error')
+
+    appointments_list = []
+    for key in appointments_dict:
+        appointment = appointments_dict.get(key)
+        appointments_list.append(appointment)
+
+    return render_template('retrieveAppointments.html', count=len(appointments_list), appointments_list=appointments_list)
+
+@app.route('/updateAppointment/<int:id>/', methods=['GET', 'POST'])
+def update_appointment(id):
+    update_appointment_form = AppointmentForm(request.form)
+    if request.method == 'POST' and update_appointment_form.validate():
+        appointments_dict = {}
+        db = shelve.open('appointment.db', 'w')
+        appointments_dict = db['Appointments']
+
+        appointment = appointments_dict.get(id)
+        appointment.set_name_ment(update_appointment_form.name_ment.data)
+        appointment.set_age_ment(update_appointment_form.age_ment.data)
+        appointment.set_gender_ment(update_appointment_form.gender_ment.data)
+        appointment.set_nric_ment(update_appointment_form.nric_ment.data)
+        appointment.set_email_ment(update_appointment_form.email_ment.data)
+        appointment.set_address_ment(update_appointment_form.address_ment.data)
+        appointment.set_remarks_ment(update_appointment_form.remarks_ment.data)
+        appointment.set_past_condition_ment(update_appointment_form.past_condition_ment.data)
+        appointment.set_doctor_ment(update_appointment_form.doctor_ment.data)
+        appointment.set_date_ment(update_appointment_form.date_ment.data)
+        appointment.set_time_ment(update_appointment_form.time_ment.data)
+
+        db['Appointments'] = appointments_dict
+
+        db.close()
+
+        return redirect(url_for('retrieve_appointments'))
+    else:
+        appointments_dict = {}
+        db = shelve.open('appointment.db', 'r')
+        appointments_dict = db['Appointments']
+
+        db.close()
+
+        appointment = appointments_dict.get(id)
+        update_appointment_form.name_ment.data = appointment.get_name_ment()
+        update_appointment_form.age_ment.data = appointment.get_age_ment()
+        update_appointment_form.gender_ment.data = appointment.get_gender_ment()
+        update_appointment_form.nric_ment.data = appointment.get_nric_ment()
+        update_appointment_form.email_ment.data = appointment.get_email_ment()
+        update_appointment_form.address_ment.data = appointment.get_address_ment()
+        update_appointment_form.remarks_ment.data = appointment.get_remarks_ment()
+        update_appointment_form.past_condition_ment.data = appointment.get_past_condition_ment()
+        update_appointment_form.doctor_ment.data = appointment.get_doctor_ment()
+        update_appointment_form.date_ment.data = appointment.get_date_ment()
+        update_appointment_form.time_ment.data = appointment.get_time_ment()
+
+        return render_template('updateAppointment.html', form=update_appointment_form)
+
+@app.route('/deleteAppointment/<int:id>', methods=['POST'])
+def delete_appointment(id):
+    appointments_dict = {}
+    db = shelve.open('appointment.db', 'w')
+    appointments_dict = db['Appointments']
+
+    appointments_dict.pop(id)
+
+    db['Appointments'] = appointments_dict
+    db.close()
+
+    return redirect(url_for('retrieve_appointments'))
+
+# ADMIN SIDE
+
+@app.route('/Admin_Homepage')
+def retrieve_appointments_admin():
+    appointments_dict = {}
+    db = shelve.open('appointment.db', 'r')
+    try:
+        if 'Appointments' in db:
+            appointments_dict = db['Appointments']
+        else:
+            db['Appointments'] = appointments_dict
+    except:
+        print('Error')
+
+    appointments_list = []
+    for key in appointments_dict:
+        appointment = appointments_dict.get(key)
+        appointments_list.append(appointment)
+
+    return render_template('Admin_Homepage.html', count=len(appointments_list), appointments_list=appointments_list)
+
+@app.route('/createAppointmentAdmin/<int:id>/', methods=['GET', 'POST'])
+def create_appointment_admin(id):
+    create_appointment_form = AppointmentForm(request.form)
+    if request.method == 'POST' and create_appointment_form.validate():
+        appointments_dict = {}
+        db = shelve.open('appointment.db', 'w')
+        appointments_dict = db['Appointments']
+
+        appointment = appointments_dict.get(id)
+        appointment.set_remarks_ment(create_appointment_form.remarks_ment.data)
+        appointment.set_date_ment(create_appointment_form.date_ment.data)
+        appointment.set_time_ment(create_appointment_form.time_ment.data)
+
+        db['Appointments'] = appointments_dict
+
+        db.close()
+
+        return redirect(url_for('retrieve_appointments_admin'))
+    else:
+        appointments_dict = {}
+        db = shelve.open('appointment.db', 'r')
+        appointments_dict = db['Appointments']
+
+        db.close()
+
+        appointment = appointments_dict.get(id)
+        create_appointment_form.name_ment.data = appointment.get_name_ment()
+        create_appointment_form.age_ment.data = appointment.get_age_ment()
+        create_appointment_form.gender_ment.data = appointment.get_gender_ment()
+        create_appointment_form.nric_ment.data = appointment.get_nric_ment()
+        create_appointment_form.email_ment.data = appointment.get_email_ment()
+        create_appointment_form.address_ment.data = appointment.get_address_ment()
+        create_appointment_form.remarks_ment.data = appointment.get_remarks_ment()
+        create_appointment_form.past_condition_ment.data = appointment.get_past_condition_ment()
+        create_appointment_form.doctor_ment.data = appointment.get_doctor_ment()
+        create_appointment_form.date_ment.data = appointment.get_date_ment()
+        create_appointment_form.time_ment.data = appointment.get_time_ment()
+
+        return render_template('createAppointmentAdmin.html', form=create_appointment_form)
+
+###############This is where Isaac's code ends###################################
+
+####################This is where Jai's code begins#######################################
+
+@app.route('/createFeedback', methods=['GET', 'POST'])
+def create_feedback():
+    create_feedback_form = CreateFeedbackForm(request.form)
+    if request.method == 'POST' and create_feedback_form.validate():
+        feedback_dict = {}
+        db = shelve.open('feedback.db', 'c')
+
+        try:
+            feedback_dict = db['Feedbacks']
+        except:
+            print("Error in retrieving Feedback from feedback.db.")
+
+        feedback = Feedback.Feedback(create_feedback_form.date.data, create_feedback_form.name.data, create_feedback_form.email.data, create_feedback_form.typeqn.data, create_feedback_form.qn1.data, create_feedback_form.qn2.data)
+        feedback_dict[feedback.get_feedback_id()] = feedback
+        db['Feedbacks'] = feedback_dict
+
+        db.close()
+
+        return redirect(url_for('retrieve_feedback'))
+    return render_template('createFeedback.html', form=create_feedback_form)
+
+
+@app.route('/retrieveFeedback')
+def retrieve_feedback():
+    feedback_dict = {}
+    db = shelve.open('feedback.db', 'r')
+    feedback_dict = db['Feedbacks']
+    db.close()
+
+    feedback_list = []
+    for key in feedback_dict:
+        feedback = feedback_dict.get(key)
+        feedback_list.append(feedback)
+
+    return render_template('retrieveFeedback.html', count=len(feedback_list), feedback_list=feedback_list)
+
+
+
+@app.route('/updateFeedback/<int:id>/', methods=['GET', 'POST'])
+def update_feedback(id):
+    update_feedback_form = CreateFeedbackForm(request.form)
+    if request.method == 'POST' and update_feedback_form.validate():
+        feedback_dict = {}
+        db = shelve.open('feedback.db', 'w')
+        feedback_dict = db['Feedbacks']
+
+        feedback = feedback_dict.get(id)
+        feedback.set_date(update_feedback_form.date.data)
+        feedback.set_name(update_feedback_form.name.data)
+        feedback.set_email(update_feedback_form.email.data)
+        feedback.set_typeqn(update_feedback_form.typeqn.data)
+        feedback.set_qn1(update_feedback_form.qn1.data)
+        feedback.set_qn2(update_feedback_form.qn2.data)
+
+        db['Feedbacks'] = feedback_dict
+        db.close()
+
+        return redirect(url_for('retrieve_feedback'))
+    else:
+        feedback_dict = {}
+        db = shelve.open('feedback.db', 'r')
+        feedback_dict = db['Feedbacks']
+        db.close()
+
+        feedback = feedback_dict.get(id)
+        update_feedback_form.date.data = feedback.get_date()
+        update_feedback_form.name.data = feedback.get_name()
+        update_feedback_form.email.data = feedback.get_email()
+        update_feedback_form.typeqn.data = feedback.get_typeqn()
+        update_feedback_form.qn1.data = feedback.get_qn1()
+        update_feedback_form.qn2.data = feedback.get_qn2()
+
+        return render_template('updateFeedback.html', form=update_feedback_form)
+
+
+
+@app.route('/deleteFeedback/<int:id>', methods=['POST'])
+def delete_feedback(id):
+    feedback_dict = {}
+    db = shelve.open('feedback.db', 'w')
+    feedback_dict = db['Feedbacks']
+
+    feedback_dict.pop(id)
+
+    db['Feedbacks'] = feedback_dict
+    db.close()
+
+    return redirect(url_for('retrieve_feedback'))
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
+###############This is where Jai's code ends###################################
