@@ -1,0 +1,79 @@
+{% extends "admin_index.html" %}
+{% block title %}Retrieve Feedback{% endblock %}
+
+{% block content %}
+<br>
+<br>
+<h1 class="display-4">Retrieve Feedback</h1>
+<div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Feedback ID</th>
+        <th>Date</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Type of Feedback</th>
+        <th>Qn 1</th>
+        <th>Qn 2</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for feedback in feedback_list %}
+     <tr>
+        <td>{{ feedback.get_feedback_id() }}</td>
+        <td>{{ feedback.get_date() }}</td>
+        <td>{{ feedback.get_name() }}</td>
+        <td>{{ feedback.get_email() }}</td>
+        {% if feedback.get_typeqn() == "C" %}
+        <td>Consultation</td>
+        {% elif feedback.get_typeqn() == "M" %}
+        <td>Medication</td>
+        {% elif feedback.get_typeqn() == "O" %}
+        <td>Other</td>
+        {% endif %}
+        <td>{{ feedback.get_qn1() }}</td>
+        <td>{{ feedback.get_qn2() }}</td>
+        <td></td>
+        <td><a href="/updateFeedback/{{feedback.get_feedback_id()}}" class="btn btn-warning">Update</a></td>
+        <td>
+          <form action="{{url_for('delete_feedback', id=feedback.get_feedback_id())}}" method="POST">
+<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#myModal_{{feedback.get_feedback_id()}}">
+  Delete
+</button>
+
+<!-- The Modal -->
+<div class="modal" id="myModal_{{feedback.get_feedback_id()}}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Delete Confirmation</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        Are you sure you want to delete {{feedback.get_name()}} created on {{feedback.get_date()}}?
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <input type="submit" value="Delete" class="btn btn-danger">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+          </form>
+        </td>
+     </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

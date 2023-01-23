@@ -1,0 +1,49 @@
+{% extends "user_index.html" %}
+{% block title %}Update Appointment{% endblock %}
+
+{% block content %}
+{% from "includes/_formHelper.html" import render_field %}
+<br>
+<br>
+<br>
+<br>
+<br>
+<h1 class="display-4">Update Appointment</h1>
+
+<form method="POST" action="">
+  <div class="form-group">
+    {{ render_field(form.name_ment, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.age_ment, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.gender_ment, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.nric_ment, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.email_ment, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.address_ment, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.remarks_ment, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.past_condition_ment, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.doctor_ment, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.date_ment, class="form-control datepicker") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.time_ment, class="form-control") }}
+  </div>
+  <input type="submit" value="Update" class="btn btn-primary"/>
+</form>
+{% endblock %}
