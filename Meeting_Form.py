@@ -29,7 +29,7 @@ class AppointmentForm(Form):
 
     def validate_name_ment(form, field):
         if field.data.isalpha() == False:
-            raise ValidationError('Enter a name using letters.')
+            raise ValidationError('Name cannot contain numbers.')
 
     def validate_nric_ment(form, field):
         if field.data[0].upper() != "S" and field.data[0].upper() != "T":
