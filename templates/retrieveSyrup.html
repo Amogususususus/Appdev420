@@ -1,5 +1,5 @@
 {% extends "admin_index.html" %}
-{% block title %}Library Loan System - Retrieve Users{% endblock %}
+{% block title %}Teledoc-Retrieve Medication{% endblock %}
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
 <style>
@@ -32,7 +32,9 @@
 <th>Price of Medication</th>
 <th>Stock of Medication</th>
 <th>Amount of Medication</th>
+<th>Expiration Date</th>
 <th>Description</th>
+<th></th>
 <th></th>
 <th></th>
 </tr>
@@ -44,9 +46,14 @@
 <tr>
     <td><img src = "{{ url_for('static', filename='uploads/'+syrup.get_Picture())}}" style="width:60px;height:60px;"></td>
 <td>{{ syrup.get_name() }}</td>
-<td>{{ syrup.get_price() }}</td>
+<td>{{ syrup.get_price() }}$</td>
+    {% if syrup.get_stock() > 30 %}
 <td>{{ syrup.get_stock() }}</td>
+    {%elif syrup.get_stock() <= 30 %}
+    <td style="color:red;">{{ syrup.get_stock() }}</td>
+    {%endif%}
 <td>{{ syrup.get_Volume() }}</td>
+<td>{{ syrup.get_Expiry() }}</td>
 <td>{{ syrup.get_Description() }}</td>
     <td>
           <a href="/Upload_Files/{{syrup.get_id()}}" class="btn btn-warning">
@@ -60,7 +67,10 @@
 </td>
 <td>
 <form action="{{url_for('delete_syrup', id=syrup.get_id())}}" method="POST">
-<input type="submit" value="Delete" class="btn btn-danger">
+<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#TheModal_{{syrup.get_id()}}">
+  Delete
+</button>
+
 </form>
 </td>
 </tr>
@@ -68,6 +78,61 @@
 </tbody>
 </table>
 </div>
-<!-- Button trigger modal -->
-      <a href="Medication_Management"><button type="button" class="btn btn-primary">Add Medication</button></a>
+
+<div class="flexing">
+    {% for syrup in syrups_list %}
+<div class="cards">
+<img src="{{ url_for('static', filename='uploads/'+syrup.get_Picture())}}" style="width:300px; height:220px;">
+    <div class="container1">
+      <h4>Name: {{ syrup.get_name() }}</h4>
+        <h5>Price: {{ syrup.get_price() }}$</h5>
+        {% if syrup.get_stock() > 30 %}
+    <h5>Stock: {{ syrup.get_stock() }}</h5>
+    {%elif syrup.get_stock() <= 30 %}
+    <h5 style="color:red;">Stock: {{ syrup.get_stock() }}</h5>
+    {%endif%}
+        <form action="{{url_for('delete_syrup', id=syrup.get_id())}}" method="POST">
+            <div style="padding-top:40px;">
+            <a href="/Details/{{syrup.get_id()}}" class="btn btn-primary" style="float:left;">View Details</a>
+                </div>
+<div style="padding-right:2px;">
+<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#TheModal_{{syrup.get_id()}}" style="float:right;">
+  Delete
+</button>
+    </div>
+                <!-- The Modal -->
+<div class="modal" id="TheModal_{{syrup.get_id()}}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Delete Confirmation</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        Are you sure you want to delete {{syrup.get_name()}}?
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <input type="submit" value="Delete" class="btn btn-danger">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</form>
+    </div>
+</div>
+
+    {% endfor %}
+</div>
+
+<a href="Medication_Management"><button type="button" class="btn btn-primary">Add Medication</button></a>
+
 {% endblock %}

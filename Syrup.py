@@ -1,5 +1,5 @@
 class Syrup:
-    def __init__(self, name_Medication, price_Medication, stock, Volume, Description,  count):
+    def __init__(self, name_Medication, price_Medication, stock, Volume, Description, Expiry, count):
         self.__count = count
         self.__count += 1
         self.__syrup_id = self.__count
@@ -9,6 +9,7 @@ class Syrup:
         self.__price_Medication = price_Medication
         self.__stock = stock
         self.__Picture = name_Medication
+        self.__Expiry=Expiry
 
     def set_count(self, count):
         self.__syrup_id=count
@@ -51,3 +52,9 @@ class Syrup:
 
     def get_Picture(self):
         return self.__Picture
+
+    def get_Expiry(self):
+        return self.__Expiry
+
+    def Set_Expiry(self, Expiry):
+        self.__Expiry = Expiry

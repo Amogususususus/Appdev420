@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.utils import secure_filename
 import os
 from Medication_forms import CreateSyrupForm
@@ -19,12 +19,13 @@ app.secret_key = "123789123803ghj127891237831asd27891237892qwe342342343423442323
 app.config['SECRET_KEY'] = 'supersecretkey'
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 ################################here begins Alan's code#################################
 
+
+
 class UploadFileForm(FlaskForm):
-    file = FileField("File", validators=[FileRequired(), FileAllowed(['jpg', 'png', 'jpeg', 'gif', 'webp'], 'File Not Allowed')])
-    submit = SubmitField("Upload File")
+    file = FileField("File", validators=[FileRequired(), FileAllowed(['jpg', 'png', 'jpeg', 'gif', 'webp'], message='File Type Not Allowed!')])
+    submitting = SubmitField("Upload File")
 
 @app.route('/')
 def home():
@@ -51,13 +52,14 @@ def Upload_Files(id):
             else:
                 db['Syrups'] = syrups_dict
         except:
-            print('Error')
+            print('Error, database for medication cannot be retrieved')
         syrup = syrups_dict.get(id)
         file = form.file.data # First grab the file
         filename= secure_filename(file.filename)
         file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(file.filename))) # Then save the file
         syrup.set_Picture(filename)
         db['Syrups'] = syrups_dict
+
         return redirect (url_for('retrieve_Syrup'))
 
     return render_template('Upload_Files.html', form=form)
@@ -66,8 +68,7 @@ def Upload_Files(id):
 @app.route('/Medication_Management', methods=['GET', 'POST'])
 def create_Syrup():
     Create_Syrup_form = CreateSyrupForm(request.form)
-
-    if request.method == 'POST' and Create_Syrup_form.validate():
+    if request.method == 'POST' and Create_Syrup_form.validate_on_submit():
         syrups_dict = {}
         db = shelve.open('syrup.db', 'c')
         try:
@@ -76,28 +77,37 @@ def create_Syrup():
             else:
                 db['Syrups'] = syrups_dict
         except:
-            print('Error')
+            print('Error, database for medication cannot be retrieved')
+
+        syrups_list_names = []
+        for key in syrups_dict:
+            syrupname = syrups_dict.get(key)
+            Medic_Name = syrupname.get_name()
+            syrups_list_names.append(Medic_Name)
 
         syrups_list = []
         for key in syrups_dict:
             syrup = syrups_dict.get(key)
             syrups_list.append(syrup)
 
-        if len(syrups_dict) == 0:
-            syrup = Syrup.Syrup(Create_Syrup_form.Medication_name.data, Create_Syrup_form.Price_Medication.data,
-                        Create_Syrup_form.Stock_Medication.data,
-                        Create_Syrup_form.Size.data, Create_Syrup_form.Description_Medication.data,  len(syrups_dict))
+        if Create_Syrup_form.Medication_name.data not in syrups_list_names:
 
+            if len(syrups_dict) == 0:
+                syrup = Syrup.Syrup(Create_Syrup_form.Medication_name.data, Create_Syrup_form.Price_Medication.data,
+                            Create_Syrup_form.Stock_Medication.data,
+                            Create_Syrup_form.Size.data, Create_Syrup_form.Description_Medication.data, Create_Syrup_form.Expiration.data, len(syrups_dict))
+
+            else:
+                last_object = syrups_list[-1]
+                syrup = Syrup.Syrup(Create_Syrup_form.Medication_name.data, Create_Syrup_form.Price_Medication.data,
+                            Create_Syrup_form.Stock_Medication.data,
+                            Create_Syrup_form.Size.data, Create_Syrup_form.Description_Medication.data, Create_Syrup_form.Expiration.data, last_object.get_id())
+
+            syrups_dict[syrup.get_id()] = syrup
+            db['Syrups'] = syrups_dict
+            return redirect (url_for('retrieve_Syrup'))
         else:
-            last_object = syrups_list[-1]
-            syrup = Syrup.Syrup(Create_Syrup_form.Medication_name.data, Create_Syrup_form.Price_Medication.data,
-                        Create_Syrup_form.Stock_Medication.data,
-                        Create_Syrup_form.Size.data, Create_Syrup_form.Description_Medication.data,  last_object.get_id())
-
-        syrups_dict[syrup.get_id()] = syrup
-        db['Syrups'] = syrups_dict
-
-        return redirect (url_for('retrieve_Syrup'))
+            flash('Medication Already Exists, use a different name!', 'EmailAlreadyExistError')
 
     return render_template('Medication_Management.html', form=Create_Syrup_form)
 
@@ -111,7 +121,8 @@ def retrieve_Syrup():
         else:
             db['Syrups'] = syrups_dict
     except:
-        print('Error')
+        print('Error, database for medication cannot be retrieved')
+
 
 
     syrups_list = []
@@ -123,6 +134,31 @@ def retrieve_Syrup():
     if request.method == 'POST' and Create_Syrup_form.validate():
         return redirect (url_for('retrieve_Syrup'))
     return render_template('retrieveSyrup.html',count=len(syrups_list), syrups_list=syrups_list, form=Create_Syrup_form)
+
+@app.route('/Details/<int:id>/', methods=['GET', 'POST'])
+def retrieve_Syrup_Details(id):
+    Update_Syrup_form = CreateSyrupForm(request.form)
+    syrups_dict = {}
+    db = shelve.open('syrup.db', 'r')
+    try:
+        if 'Syrups' in db:
+            syrups_dict = db['Syrups']
+        else:
+            db['Syrups'] = syrups_dict
+    except:
+        print('Error, database for medication cannot be retrieved')
+
+    syrup = syrups_dict.get(id)
+    Update_Syrup_form.Medication_name.data = syrup.get_name()
+    Update_Syrup_form.Price_Medication.data = syrup.get_price()
+    Update_Syrup_form.Stock_Medication.data = syrup.get_stock()
+    Update_Syrup_form.Size.data = syrup.get_Volume()
+    Update_Syrup_form.Expiration.data = syrup.get_Expiry()
+    Update_Syrup_form.Description_Medication.data = syrup.get_Description()
+
+
+
+    return render_template('Details.html', form=Update_Syrup_form)
 
 @app.route('/UpdatingSyrups/<int:id>/', methods=['GET', 'POST'])
 def update_Syrup(id):
@@ -136,12 +172,13 @@ def update_Syrup(id):
             else:
                 db['Syrups'] = syrups_dict
         except:
-            print('Error')
+            print('Error, database for medication cannot be retrieved')
         syrup = syrups_dict.get(id)
         syrup.set_name(Update_Syrup_form.Medication_name.data)
         syrup.set_price(Update_Syrup_form.Price_Medication.data)
         syrup.set_stock(Update_Syrup_form.Stock_Medication.data)
         syrup.set_Volume(Update_Syrup_form.Size.data)
+        syrup.Set_Expiry(Update_Syrup_form.Expiration.data)
         syrup.set_Description(Update_Syrup_form.Description_Medication.data)
         db['Syrups'] = syrups_dict
 
@@ -156,6 +193,7 @@ def update_Syrup(id):
         Update_Syrup_form.Price_Medication.data = syrup.get_price()
         Update_Syrup_form.Stock_Medication.data = syrup.get_stock()
         Update_Syrup_form.Size.data = syrup.get_Volume()
+        Update_Syrup_form.Expiration.data = syrup.get_Expiry()
         Update_Syrup_form.Description_Medication.data = syrup.get_Description()
         return render_template('UpdatingSyrups.html', form=Update_Syrup_form)
 
@@ -169,7 +207,7 @@ def delete_syrup(id):
         else:
             db['Syrups'] = syrups_dict
     except:
-        print('Error')
+        print('Error, database for medication cannot be retrieved')
     syrups_dict.pop(id)
     db['Syrups'] = syrups_dict
 
@@ -649,5 +687,5 @@ def page_not_found(e):
     return render_template('error404.html'), 404
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
 ###############This is where Jai's code ends###################################
