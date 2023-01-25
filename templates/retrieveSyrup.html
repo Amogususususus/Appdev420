@@ -1,15 +1,24 @@
 {% extends "admin_index.html" %}
-{% block title %}Teledoc-Retrieve Medication{% endblock %}
+{% block title %}View Medications{% endblock %}
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
-<style>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    a:link { text-decoration: none; }
+    a:visited { text-decoration: none; }
+    a:hover { text-decoration: none; color:black;}
+    a:active { text-decoration: none; }
+    a {color:black;}
+
     .divider{
-  width:25px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-</style>
+    width:25px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;}
+    </style>
+</head>
 
           <br>
           <br>
