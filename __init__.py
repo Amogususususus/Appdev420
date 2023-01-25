@@ -521,18 +521,45 @@ def retrieve_appointments_admin():
 
     return render_template('Admin_Homepage.html', count=len(appointments_list), appointments_list=appointments_list)
 
-@app.route('/createAppointmentAdmin/<int:id>/', methods=['GET', 'POST'])
-def create_appointment_admin(id):
-    create_appointment_form = AppointmentForm(request.form)
-    if request.method == 'POST' and create_appointment_form.validate():
+@app.route('/retrieveAppointmentsSortedAdmin')
+def retrieve_appointments_sorted_admin():
+    appointments_dict = {}
+    db = shelve.open('appointment.db', 'r')
+    try:
+        if 'Appointments' in db:
+            appointments_dict = db['Appointments']
+        else:
+            db['Appointments'] = appointments_dict
+    except:
+        print('Error')
+
+    appointments_list = []
+    for key in appointments_dict:
+        appointment = appointments_dict.get(key)
+        appointments_list.append(appointment)
+
+    return render_template('retrieveAppointmentsSortedAdmin.html', count=len(appointments_list), appointments_list=appointments_list)
+
+@app.route('/updateAppointmentAdmin/<int:id>/', methods=['GET', 'POST'])
+def update_appointment_admin(id):
+    update_appointment_admin_form = AppointmentForm(request.form)
+    if request.method == 'POST' and update_appointment_admin_form.validate():
         appointments_dict = {}
         db = shelve.open('appointment.db', 'w')
         appointments_dict = db['Appointments']
 
         appointment = appointments_dict.get(id)
-        appointment.set_remarks_ment(create_appointment_form.remarks_ment.data)
-        appointment.set_date_ment(create_appointment_form.date_ment.data)
-        appointment.set_time_ment(create_appointment_form.time_ment.data)
+        appointment.set_name_ment(update_appointment_admin_form.name_ment.data)
+        appointment.set_age_ment(update_appointment_admin_form.age_ment.data)
+        appointment.set_gender_ment(update_appointment_admin_form.gender_ment.data)
+        appointment.set_nric_ment(update_appointment_admin_form.nric_ment.data)
+        appointment.set_email_ment(update_appointment_admin_form.email_ment.data)
+        appointment.set_address_ment(update_appointment_admin_form.address_ment.data)
+        appointment.set_remarks_ment(update_appointment_admin_form.remarks_ment.data)
+        appointment.set_past_condition_ment(update_appointment_admin_form.past_condition_ment.data)
+        appointment.set_doctor_ment(update_appointment_admin_form.doctor_ment.data)
+        appointment.set_date_ment(update_appointment_admin_form.date_ment.data)
+        appointment.set_time_ment(update_appointment_admin_form.time_ment.data)
 
         db['Appointments'] = appointments_dict
 
@@ -547,19 +574,19 @@ def create_appointment_admin(id):
         db.close()
 
         appointment = appointments_dict.get(id)
-        create_appointment_form.name_ment.data = appointment.get_name_ment()
-        create_appointment_form.age_ment.data = appointment.get_age_ment()
-        create_appointment_form.gender_ment.data = appointment.get_gender_ment()
-        create_appointment_form.nric_ment.data = appointment.get_nric_ment()
-        create_appointment_form.email_ment.data = appointment.get_email_ment()
-        create_appointment_form.address_ment.data = appointment.get_address_ment()
-        create_appointment_form.remarks_ment.data = appointment.get_remarks_ment()
-        create_appointment_form.past_condition_ment.data = appointment.get_past_condition_ment()
-        create_appointment_form.doctor_ment.data = appointment.get_doctor_ment()
-        create_appointment_form.date_ment.data = appointment.get_date_ment()
-        create_appointment_form.time_ment.data = appointment.get_time_ment()
+        update_appointment_admin_form.name_ment.data = appointment.get_name_ment()
+        update_appointment_admin_form.age_ment.data = appointment.get_age_ment()
+        update_appointment_admin_form.gender_ment.data = appointment.get_gender_ment()
+        update_appointment_admin_form.nric_ment.data = appointment.get_nric_ment()
+        update_appointment_admin_form.email_ment.data = appointment.get_email_ment()
+        update_appointment_admin_form.address_ment.data = appointment.get_address_ment()
+        update_appointment_admin_form.remarks_ment.data = appointment.get_remarks_ment()
+        update_appointment_admin_form.past_condition_ment.data = appointment.get_past_condition_ment()
+        update_appointment_admin_form.doctor_ment.data = appointment.get_doctor_ment()
+        update_appointment_admin_form.date_ment.data = appointment.get_date_ment()
+        update_appointment_admin_form.time_ment.data = appointment.get_time_ment()
 
-        return render_template('createAppointmentAdmin.html', form=create_appointment_form)
+        return render_template('updateAppointmentAdmin.html', form=update_appointment_admin_form)
 
 ###############This is where Isaac's code ends###################################
 

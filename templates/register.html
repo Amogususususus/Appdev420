@@ -14,7 +14,7 @@
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-<body style="background-color:azure;">
+<body>
   <style>
   a:link { text-decoration: none; }
   a:visited { text-decoration: none; }
@@ -24,7 +24,7 @@
   a{color:black;
   padding-left:4px;}
 </style>
-  <section class="container-fluid " style="height: 650px; width: 30%; border-style:solid; background-color:azure;">
+  <section class="container-fluid " style="height: 880px; width: 40%; border: solid #efc3bf; border-radius:10px;">
     <div class="close-button">
     <button class="btn float-right" ><i class="fa fa-close"></i><a href="{{url_for('home')}}">Close</a></button>
   </div>
@@ -56,7 +56,7 @@
       {{ render_field(form.condition, class="form-control") }}
     </div>
   </div>
-  <input type="submit" value="Register" class="btn btn-primary mt-2"/>
+  <input type="submit" value="Register" class="btn btn-success btn-block mt-2"/>
 </form>
 </section>
 <br>

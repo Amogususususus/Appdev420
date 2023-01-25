@@ -18,7 +18,7 @@
 
           <br>
           <br>
-<body style="background-color:azure;">
+<body>
   <style>
   a:link { text-decoration: none; }
   a:visited { text-decoration: none; }
@@ -29,7 +29,7 @@
   padding-left:4px;}
 </style>
 <h1 class="display-4 text-center mt-4 mb-4">Login</h1>
-<section class="container-fluid " style="height: 270px; width: 30%; border-style:solid; background-color:azure;">
+<section class="container-fluid bg-lightx " style="height: 270px; width: 40%; border:solid #efc3bf; border-radius:10px;">
   <div class="close-button">
     <button class="btn float-right" ><i class="fa fa-close"></i><a href="{{url_for('home')}}">Close</a></button>
   </div>
@@ -43,7 +43,7 @@
     {{ render_field(form.password, class="form-control") }}
   </div>
 
-  <input type="submit" value="Log In" class="btn btn-primary mt-2"/>
+  <input type="submit" value="Log In" class="btn btn-success btn-block mt-2"/>
 </form>
 </section>
 <br>
