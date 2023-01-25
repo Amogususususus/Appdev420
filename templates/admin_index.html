@@ -15,8 +15,33 @@ body {
 ul{
 	list-style: none;
 }
-
-
+.flexing {
+    align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.cards {
+ display:inline-block;
+ background-color:#aaaaaa;
+ width:400px;
+ height:430px;
+ border-radius:5px;
+ object-fit:contain;
+ border:solid 5px Transparent;
+ padding:15px;
+ transition: box-shadow 0.5s;
+ margin:5px;
+ text-align: center;
+  transition: 0.4s;
+}
+.cards:hover {
+background-color:#6b6b6b;
+border:solid 5px #00bcd4;
+}
+.container1{
+color:black;
+}
     </style>
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %}</title>
