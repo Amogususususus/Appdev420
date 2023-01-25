@@ -135,31 +135,6 @@ def retrieve_Syrup():
         return redirect (url_for('retrieve_Syrup'))
     return render_template('retrieveSyrup.html',count=len(syrups_list), syrups_list=syrups_list, form=Create_Syrup_form)
 
-@app.route('/Details/<int:id>/', methods=['GET', 'POST'])
-def retrieve_Syrup_Details(id):
-    Update_Syrup_form = CreateSyrupForm(request.form)
-    syrups_dict = {}
-    db = shelve.open('syrup.db', 'r')
-    try:
-        if 'Syrups' in db:
-            syrups_dict = db['Syrups']
-        else:
-            db['Syrups'] = syrups_dict
-    except:
-        print('Error, database for medication cannot be retrieved')
-
-    syrup = syrups_dict.get(id)
-    Update_Syrup_form.Medication_name.data = syrup.get_name()
-    Update_Syrup_form.Price_Medication.data = syrup.get_price()
-    Update_Syrup_form.Stock_Medication.data = syrup.get_stock()
-    Update_Syrup_form.Size.data = syrup.get_Volume()
-    Update_Syrup_form.Expiration.data = syrup.get_Expiry()
-    Update_Syrup_form.Description_Medication.data = syrup.get_Description()
-
-
-
-    return render_template('Details.html', form=Update_Syrup_form)
-
 @app.route('/UpdatingSyrups/<int:id>/', methods=['GET', 'POST'])
 def update_Syrup(id):
     Update_Syrup_form = CreateSyrupForm(request.form)
