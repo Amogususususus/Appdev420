@@ -1,0 +1,12 @@
+{% extends "admin_index.html" %}
+{% block title %}Teledoc-Retrieve Medication Details{% endblock %}
+{% block content %}
+{% from "includes/_formHelper.html" import render_field %}
+{% for syrup in syrup %}
+<h1>{{ syrup.get_name() }}</h1>
+{% endfor %}
+
+hi
+
+
+{% endblock %}
