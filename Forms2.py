@@ -15,6 +15,8 @@ class CreateFeedbackForm(Form):
         today = date.today()
         if field.data.strftime('%Y-%m-%d') < today.strftime('%Y-%m-%d'):
             raise ValidationError("Select a date that's not in the past")
+        elif field.data.strftime('%Y-%m-%d') > today.strftime('%Y-%m-%d'):
+            raise ValidationError("Select a date that's not in the future")
 
 
 
