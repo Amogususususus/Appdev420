@@ -12,6 +12,8 @@ from Meeting_Form import AppointmentForm
 import Appointment
 from Forms2 import CreateFeedbackForm
 import shelve, Feedback
+from wtforms.fields import DateField
+from datetime import date
 
 app = Flask(__name__)
 app.secret_key = "123789123803ghj127891237831asd27891237892qwe3423423434234423234"
@@ -21,7 +23,9 @@ UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ################################here begins Alan's code#################################
 
-
+class Adding_Stock_Form(FlaskForm):
+    Addition_Value = IntegerField("enter the amount you are adding")
+    submit = SubmitField("Add")
 
 class UploadFileForm(FlaskForm):
     file = FileField("File", validators=[FileRequired(), FileAllowed(['jpg', 'png', 'jpeg', 'gif', 'webp'], message='File Type Not Allowed!')])
@@ -171,6 +175,31 @@ def update_Syrup(id):
         Update_Syrup_form.Expiration.data = syrup.get_Expiry()
         Update_Syrup_form.Description_Medication.data = syrup.get_Description()
         return render_template('UpdatingSyrups.html', form=Update_Syrup_form)
+
+@app.route('/Add_Stock/<int:id>/' ,methods=['GET','POST'])
+def Add_Stock(id):
+    form = Adding_Stock_Form()
+    if request.method == 'POST' and form.validate_on_submit():
+        syrups_dict = {}
+        db = shelve.open('syrup.db', 'w')
+        try:
+            if 'Syrups' in db:
+                syrups_dict = db['Syrups']
+            else:
+                db['Syrups'] = syrups_dict
+        except:
+            print('Error, database for medication cannot be retrieved')
+
+        syrup = syrups_dict.get(id)
+        Current_Stock_Value=syrup.get_stock()
+        Addition_Value=form.Addition_Value.data
+        New_Stock=Addition_Value+Current_Stock_Value
+        syrup.set_stock(New_Stock)
+        db['Syrups'] = syrups_dict
+
+        return redirect (url_for('retrieve_Syrup'))
+    return render_template('Update_Stock.html', form=form)
+
 
 @app.route('/delete_syrups/<int:id>', methods=['POST'])
 def delete_syrup(id):

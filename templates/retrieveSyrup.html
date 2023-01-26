@@ -11,12 +11,35 @@
     a:hover { text-decoration: none; color:black;}
     a:active { text-decoration: none; }
     a {color:black;}
-
+    .fit{
+      display: inline-block;
+  margin: 0;
+    }
     .divider{
     width:25px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;}
+
+    .Buttonstyle{
+      background-color: transparent;
+  border: solid 2px #00bcd4;
+  color: black;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius:4px;
+  margin-left:30px;
+    }
+    .Buttonstyle:hover{
+    background-color: #00bcd4;
+    color: white;
+    transition:0.2s ease-in-out;
+    }
     </style>
 </head>
 
@@ -62,25 +85,32 @@
             <div class='modal fade' id='ViewModal_{{syrup.get_id()}}' tabindex='-1' aria-hidden='true'>
             <div class='modal-dialog'>
                 <div class='modal-content' style="border: #00bcd4 5px solid;">
-                    <div class="modal-body" style="background-color:#aaaaaa;">
+                    <div class="modal-body" style="background-color:#ECECEC;">
 
                             <h3 class='card-title'>Product Details:</h3>
 
                         <img src="{{ url_for('static', filename='uploads/'+syrup.get_Picture())}}" style="width:300px; height:220px;">
                         <br>
-                            <h5 >Name : {{syrup.get_name()}}</h5>
-                            <h5 >Price : {{syrup.get_price()}}$</h5>
+                            <h5>Name : {{syrup.get_name()}}</h5>
+                            <h5>Price : {{syrup.get_price()}}$</h5>
 
                                     {% if syrup.get_stock() > 30 %}
-    <h5>Stock: {{ syrup.get_stock() }}</h5>
+    <h5 class="fit">Stock: {{ syrup.get_stock() }}</h5>
     {%elif syrup.get_stock() <= 30 %}
-    <h5 style="color:red;">Stock: {{ syrup.get_stock() }}</h5>
+    <h5 style="color:red;" class="fit">Stock: {{ syrup.get_stock() }}</h5>
     {%endif%}
-                            <h5 >Size : {{syrup.get_Volume()}}</h5>
 
-                            <h5 >Expiry date : {{syrup.get_Expiry()}}</h5>
+                       <a href="/Add_Stock/{{syrup.get_id()}}" class="Buttonstyle">
 
-                            <h5 >Description : {{syrup.get_Description()}}</h5>
+  Add Stock
+
+        </a>
+
+                            <h5>Size : {{syrup.get_Volume()}}</h5>
+
+                            <h5>Expiry date : {{syrup.get_Expiry()}}</h5>
+
+                            <h5>Description : {{syrup.get_Description()}}</h5>
                         <br>
 
 
