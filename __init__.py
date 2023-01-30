@@ -12,8 +12,7 @@ from Meeting_Form import AppointmentForm
 import Appointment
 from Forms2 import CreateFeedbackForm
 import shelve, Feedback
-from wtforms.fields import DateField
-from datetime import date
+
 
 app = Flask(__name__)
 app.secret_key = "123789123803ghj127891237831asd27891237892qwe3423423434234423234"
@@ -111,7 +110,7 @@ def create_Syrup():
             db['Syrups'] = syrups_dict
             return redirect (url_for('retrieve_Syrup'))
         else:
-            flash('Medication Already Exists, use a different name!', 'EmailAlreadyExistError')
+            flash('Medication Already Exists, use a different name!', 'NameAlreadyExistError')
 
     return render_template('Medication_Management.html', form=Create_Syrup_form)
 

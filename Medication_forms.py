@@ -3,6 +3,8 @@ from wtforms.validators import Optional, Length, DataRequired, NumberRange
 from flask_wtf import FlaskForm
 from wtforms.fields import DateField
 from datetime import date
+
+
 class CreateSyrupForm(FlaskForm):
     Medication_name = StringField(label=('Name of Medication:'), validators=[DataRequired(), Length(min=1, max=50, message='Name length must be between %(min)d and %(max)d characters')])
     Price_Medication = IntegerField(label=('Price of Medication:'), validators=[DataRequired()])
@@ -28,4 +30,14 @@ class CreateSyrupForm(FlaskForm):
         elif Expiration.data.strftime("%Y-%m-%d") == today.strftime("%Y-%m-%d"):
             raise ValidationError('Select an expiration date that is not the current date.')
 
+    def validate_Price_Medication(self, Price_Medication):
+        if self.Price_Medication.data > 100000:
+            raise ValidationError('Price is too high, did you accidentally add an extra digit?')
+        if self.Price_Medication.data < 0:
+            raise ValidationError('Price is too low, did you forget to add an extra digit?')
 
+    def validate_Stock_Medication(self, Stock_Medication):
+        if self.Stock_Medication.data > 10000:
+            raise ValidationError('Stock is going over available space, did you accidentally add an extra digit?')
+        if self.Stock_Medication.data < 0:
+            raise ValidationError('Stock is too low, did you forget to add an extra digit?')
