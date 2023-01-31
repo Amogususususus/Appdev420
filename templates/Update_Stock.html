@@ -1,19 +1,27 @@
 {% extends "anotherform.html" %}
-{% block title %}Upload Files{% endblock %}
+{% block title %}Add Stock{% endblock %}
 {% block content %}
           <br>
           <br>
           <br>
 		  <br>
           <br>
-    <h3 style="text-align:center;">Please only Upload in 'jpg', 'png', 'jpeg', 'gif', 'webp' File format.</h3>
+          <br>
+          <br>
+          <br>
+		  <br>
+          <br>          <br>
+          <br>
+          <br>
+		  <br>
+          <br>
     <meta charset="UTF-8">
     <title>Title</title>
 <div class="cards7 bg-light">
     <form method='POST' enctype='multipart/form-data' style="text-align:center;">
         {{form.hidden_tag()}}
-        {{form.file()}}
-        {{form.submitting()}}
+        {{form.Addition_Value()}}
+        {{form.submit()}}
     </form>
     <button onclick="history.back()" class="btn btn-secondary">Go Back</button>
     </div>

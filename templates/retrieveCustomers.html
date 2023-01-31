@@ -1,5 +1,5 @@
 {% extends "admin_index.html" %}
-{% block title %}Accounts{% endblock %}
+{% block title %}View Accounts{% endblock %}
 
 {% block content %}
 
@@ -7,6 +7,18 @@
           <br>
 		  <br>          <br>
 		  <br>          <br>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    a:link { text-decoration: none; }
+    a:visited { text-decoration: none; }
+    a:hover { text-decoration: none; color:black;}
+    a:active { text-decoration: none; }
+    a {color:black;}
+    </style>
+</head>
 
 <div>
   {% if count == 0 %}
@@ -48,7 +60,7 @@
           <td>{{ customer.get_address() }}</td>
           <td>{{ customer.get_age() }}</td>
           <td>{{ customer.get_condition() }}</td>
-          <td><a href="/updateCustomer/{{customer.get_user_id()}}" class="btn btn-success">Update</a></td>
+          <td><a href="/updateCustomer/{{customer.get_user_id()}}" class="btn btn-warning">Update</a></td>
           <td>
             <form action="{{url_for('delete_customer', id=customer.get_user_id())}}" method="POST">
 <!--              <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{customer.get_name()}} ?');">-->

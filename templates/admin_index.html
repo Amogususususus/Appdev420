@@ -23,25 +23,46 @@ ul{
 }
 .cards {
  display:inline-block;
- background-color:#aaaaaa;
+ background-color:#ECECEC;
  width:400px;
- height:430px;
+ height:440px;
  border-radius:5px;
  object-fit:contain;
- border:solid 5px Transparent;
+ border:solid 5px #efc3bf;
  padding:15px;
  transition: box-shadow 0.5s;
  margin:5px;
  text-align: center;
-  transition: 0.4s;
+  transition: 0.5s;
 }
 .cards:hover {
-background-color:#6b6b6b;
+ width:405px;
+ height:445px;
 border:solid 5px #00bcd4;
+color:red;
 }
+
 .container1{
 color:black;
+text-align:left;
+padding-top:6px;
 }
+
+.mentdiv {
+text-align: left;
+display: inline-block;
+width: 85%;
+min-height: 1100px;
+height: auto;
+border: solid #efc3bf;
+padding: 15px;
+border-radius: 10px;
+margin-left: 110px;
+margin-top: 50px;
+margin-bottom: 50px;
+}
+
+
     </style>
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %}</title>

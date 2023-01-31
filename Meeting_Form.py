@@ -28,10 +28,22 @@ class AppointmentForm(Form):
                                                                                      ('8pm', '2000'), ], default='')
 
     def validate_name_ment(form, field):
+        for c in field.data:
+            if not (c.isalpha() or c.isdigit() or c == ' '):
+                raise ValidationError('Name cannot contain special characters.')
+
         if field.data.isalpha() == False:
-            raise ValidationError('Enter a name using letters.')
+            raise ValidationError('Name cannot contain numbers.')
 
     def validate_nric_ment(form, field):
+        for s in field.data:
+            if s == ' ':
+                raise ValidationError('NRIC cannot contain spaces.')
+
+        for c in field.data:
+            if not (c.isalpha() or c.isdigit() or c == ' '):
+                raise ValidationError('NRIC cannot contain special characters.')
+
         if field.data[0].upper() != "S" and field.data[0].upper() != "T":
             raise ValidationError('First character has to be S or T.')
 
@@ -40,6 +52,21 @@ class AppointmentForm(Form):
 
         elif field.data[-1].isalpha() == False:
             raise ValidationError('Last character has to be a letter.')
+
+    def validate_address_ment(form, field):
+        for c in field.data:
+            if not (c.isalpha() or c.isdigit() or c == '#' or c == ' '):
+                raise ValidationError('Address cannot contain special characters other than #.')
+
+    def validate_remarks_ment(form, field):
+        for c in field.data:
+            if not (c.isalpha() or c.isdigit() or c == ' '):
+                raise ValidationError('Remarks cannot contain special characters.')
+
+    def validate_past_condition_ment(form, field):
+        for c in field.data:
+            if not (c.isalpha() or c.isdigit() or c == ' '):
+                raise ValidationError('Pre-Existing Medical Conditions cannot contain special characters.')
 
     def validate_date_ment(form, field):
         today = date.today()
