@@ -27,6 +27,31 @@ class AppointmentForm(Form):
                                                                                      ('7pm', '1900'),
                                                                                      ('8pm', '2000'), ], default='')
 
+class updateAppointmentForm(Form):
+    name_ment = StringField('Name', [validators.Length(min=1, max=100), validators.DataRequired()], render_kw={'readonly':True})
+    age_ment = IntegerField('Age', [validators.NumberRange(min=1, max=120), validators.DataRequired()], render_kw={'readonly':True})
+    gender_ment = SelectField('Gender', [validators.DataRequired()], choices=[('', 'Select'), ('M', 'Male'), ('F', 'Female')], default='', render_kw={'readonly':True})
+    nric_ment = StringField('NRIC', [validators.Length(min=9, max=9), validators.DataRequired()], render_kw={'readonly':True})
+    email_ment = EmailField('Email', [validators.Email(), validators.DataRequired()], render_kw={'readonly':True})
+    address_ment = TextAreaField('Address', [validators.length(min=5, max=200), validators.DataRequired()], render_kw={'readonly':True})
+    remarks_ment = TextAreaField('Remarks', [validators.length(min=3, max=120), validators.Optional()])
+    past_condition_ment = TextAreaField('Pre-Existing Medical Conditions', [validators.Optional()], render_kw={'readonly':True})
+    doctor_ment = SelectField('Doctor', [validators.DataRequired()], choices=[('', 'Select'), ('Dr. Ong', 'Dr. Ong'), ('Dr. Lim', 'Dr. Lim')], default='')
+    date_ment = DateField('Date of Appointment', format='%Y-%m-%d')
+    time_ment = SelectField('Time (in hours)', [validators.DataRequired()], choices=[('', 'Select'),
+                                                                                     ('9am', '0900'),
+                                                                                     ('10am', '1000'),
+                                                                                     ('11am', '1100'),
+                                                                                     ('12pm', '1200'),
+                                                                                     ('1pm', '1300'),
+                                                                                     ('2pm', '1400'),
+                                                                                     ('3pm', '1500'),
+                                                                                     ('4pm', '1600'),
+                                                                                     ('5pm', '1700'),
+                                                                                     ('6pm', '1800'),
+                                                                                     ('7pm', '1900'),
+                                                                                     ('8pm', '2000'), ], default='')
+
     def validate_name_ment(form, field):
         for c in field.data:
             if not (c.isalpha() or c.isdigit() or c == ' '):
@@ -55,17 +80,17 @@ class AppointmentForm(Form):
 
     def validate_address_ment(form, field):
         for c in field.data:
-            if not (c.isalpha() or c.isdigit() or c == '#' or c == ' '):
-                raise ValidationError('Address cannot contain special characters other than #.')
+            if not (c.isalpha() or c.isdigit() or c == '#' or c == '-' or c == ' '):
+                raise ValidationError('Address cannot contain special characters other than # and -.')
 
     def validate_remarks_ment(form, field):
         for c in field.data:
-            if not (c.isalpha() or c.isdigit() or c == ' '):
-                raise ValidationError('Remarks cannot contain special characters.')
+            if not (c.isalpha() or c.isdigit() or c == ',' or c == '.' or c == '?' or c == '!' or c == ' '):
+                raise ValidationError('Remarks cannot contain special characters other than punctuation marks.')
 
     def validate_past_condition_ment(form, field):
         for c in field.data:
-            if not (c.isalpha() or c.isdigit() or c == ' '):
+            if not (c.isalpha() or c.isdigit() or c == ',' or c == '.' or c == ' '):
                 raise ValidationError('Pre-Existing Medical Conditions cannot contain special characters.')
 
     def validate_date_ment(form, field):

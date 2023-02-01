@@ -8,7 +8,7 @@ from flask_wtf import FlaskForm
 from wtforms import SubmitField
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from Account_Form import *
-from Meeting_Form import AppointmentForm
+from Meeting_Form import AppointmentForm, updateAppointmentForm
 import Appointment
 from Forms2 import CreateFeedbackForm
 import shelve, Feedback
@@ -444,7 +444,7 @@ def retrieve_appointments():
 
 @app.route('/updateAppointment/<int:id>/', methods=['GET', 'POST'])
 def update_appointment(id):
-    update_appointment_form = AppointmentForm(request.form)
+    update_appointment_form = updateAppointmentForm(request.form)
     if request.method == 'POST' and update_appointment_form.validate():
         appointments_dict = {}
         db = shelve.open('appointment.db', 'w')
@@ -545,7 +545,7 @@ def retrieve_appointments_sorted_admin():
 
 @app.route('/updateAppointmentAdmin/<int:id>/', methods=['GET', 'POST'])
 def update_appointment_admin(id):
-    update_appointment_admin_form = AppointmentForm(request.form)
+    update_appointment_admin_form = updateAppointmentForm(request.form)
     if request.method == 'POST' and update_appointment_admin_form.validate():
         appointments_dict = {}
         db = shelve.open('appointment.db', 'w')
