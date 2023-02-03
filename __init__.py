@@ -20,7 +20,7 @@ app.secret_key = "123789123803ghj127891237831asd27891237892qwe342342343423442323
 app.config['SECRET_KEY'] = 'supersecretkey'
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-################################here begins Alan's code#################################
+################################here begins Helun's code#################################
 
 class Adding_Stock_Form(FlaskForm):
     Addition_Value = IntegerField("enter the amount you are adding")
@@ -216,7 +216,7 @@ def delete_syrup(id):
 
     return redirect(url_for('retrieve_Syrup'))
 
-###########################This is where Alan's code ends###########################
+###########################This is where Helun's code ends###########################
 
 ##########################This is where Benson's code begins########################
 
@@ -613,7 +613,7 @@ def create_feedback():
 
         db.close()
 
-        return redirect(url_for('retrieve_feedback'))
+        return redirect(url_for('User_Homepage'))
     return render_template('createFeedback.html', form=create_feedback_form)
 
 
@@ -652,7 +652,7 @@ def update_feedback(id):
         db['Feedbacks'] = feedback_dict
         db.close()
 
-        return redirect(url_for('retrieve_feedback'))
+        return redirect(url_for('User_Homepage'))
     else:
         feedback_dict = {}
         db = shelve.open('feedback.db', 'r')
