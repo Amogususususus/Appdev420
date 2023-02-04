@@ -5,6 +5,10 @@ from wtforms.fields import DateField
 from datetime import date
 
 
+class SearchForm(FlaskForm):
+    searched=StringField(label=("Search"), validators=[DataRequired()])
+    submit=SubmitField(label=('Submit'))
+
 class CreateSyrupForm(FlaskForm):
     Medication_name = StringField(label=('Name of Medication:'), validators=[DataRequired(), Length(min=1, max=50, message='Name length must be between %(min)d and %(max)d characters')])
     Price_Medication = IntegerField(label=('Price of Medication:'), validators=[DataRequired()])

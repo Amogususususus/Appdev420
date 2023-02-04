@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.utils import secure_filename
 import os
-from Medication_forms import CreateSyrupForm
+from Medication_forms import CreateSyrupForm, SearchForm
 import Customer
 import Syrup
 from flask_wtf import FlaskForm
@@ -12,7 +12,7 @@ from Meeting_Form import AppointmentForm, updateAppointmentForm
 import Appointment
 from Forms2 import CreateFeedbackForm
 import shelve, Feedback
-
+from Syrup import *
 
 app = Flask(__name__)
 app.secret_key = "123789123803ghj127891237831asd27891237892qwe3423423434234423234"
@@ -21,6 +21,40 @@ app.config['SECRET_KEY'] = 'supersecretkey'
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ################################here begins Alan's code#################################
+
+NameList = []
+def eventSearchFunction(searchItem):
+
+    NameList.clear()
+
+    syrups_dict = {}
+    db = shelve.open('syrup.db')
+
+    try:
+        if 'Syrups' in db:
+            syrups_dict = db['Syrups']
+        else:
+            db['Syrups'] = syrups_dict
+    except:
+        print('Error in handling database!')
+
+    try:
+        searchData = int(searchItem)
+        print('searchItem is an integer')
+    except:
+        searchData = str(searchItem).lower()
+        print('searchItem is a string')
+
+    for key in syrups_dict:
+        syrup = syrups_dict.get(key)
+
+        if isinstance(searchData, str):
+            if searchData == syrup.get_name() or searchData in str(syrup.get_name()).lower():
+                NameList.append(syrup)
+
+
+    print(NameList)
+
 
 class Adding_Stock_Form(FlaskForm):
     Addition_Value = IntegerField("enter the amount you are adding")
@@ -114,8 +148,33 @@ def create_Syrup():
 
     return render_template('Medication_Management.html', form=Create_Syrup_form)
 
-@app.route('/retrieveSyrup')
+@app.route('/retrieveSyrup', methods=['GET', 'POST'])
 def retrieve_Syrup():
+
+    Searchingform = SearchForm()
+
+    if Searchingform.validate_on_submit() and request.method == 'POST':
+
+        syrups_dict = {}
+        db = shelve.open('syrup.db', 'r')
+        try:
+            if 'Syrups' in db:
+                syrups_dict = db['Syrups']
+            else:
+                db['Syrups'] = syrups_dict
+        except:
+            print('Error, database for medication cannot be retrieved')
+
+        SearchData = Searchingform.searched.data
+
+        eventSearchFunction(SearchData)
+
+        NameList_searchPage = NameList
+
+        print(NameList_searchPage)
+
+        return render_template('retrieveSyrup.html', Searchingform=Searchingform, ListofNames=NameList_searchPage)
+
     syrups_dict = {}
     db = shelve.open('syrup.db', 'r')
     try:
@@ -126,17 +185,14 @@ def retrieve_Syrup():
     except:
         print('Error, database for medication cannot be retrieved')
 
-
-
     syrups_list = []
     for key in syrups_dict:
         syrup = syrups_dict.get(key)
         syrups_list.append(syrup)
 
-    Create_Syrup_form = CreateSyrupForm(request.form)
-    if request.method == 'POST' and Create_Syrup_form.validate():
-        return redirect (url_for('retrieve_Syrup'))
-    return render_template('retrieveSyrup.html',count=len(syrups_list), syrups_list=syrups_list, form=Create_Syrup_form)
+
+    return render_template('retrieveSyrup.html',count=len(syrups_list), syrups_list=syrups_list, Searchingform=Searchingform)
+
 
 @app.route('/UpdatingSyrups/<int:id>/', methods=['GET', 'POST'])
 def update_Syrup(id):

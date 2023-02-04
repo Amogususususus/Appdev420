@@ -5,6 +5,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+  <script src="https://kit.fontawesome.com/3929e16ef5.js" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"></script>
     <style>
     a:link { text-decoration: none; }
     a:visited { text-decoration: none; }
@@ -42,11 +48,53 @@
     }
     </style>
 </head>
+<nav class="navbar navbar-expand-md navbar-light fixed-top bg-white ">
+    <a class="navbar-brand" href="#"><img src="https://cdn.discordapp.com/attachments/824290507848024097/1055927102387519569/image.png" class="img-fluid" alt="Responsive image" style="width:4em;height:4em;"></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
 
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">About Us</a>
+        </li>
+        <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Our Services
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="#">Primary Care</a>
+          <a class="dropdown-item" href="#">Pediatrics</a>
+          <a class="dropdown-item" href="#">Dermatology</a>
+          <a class="dropdown-item" href="#">Nutrition</a>
+          <a class="dropdown-item" href="#"><div class="c-list">Sexual Health</div></a>
+        </div>
+      </li>
+      <li>
+        <form method="POST" class="form-inline mt-2 mt-md-0">
+          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" style="width:45em;" name="searched">
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+      </li>
+
+    </ul>
+
+      <button type="button" class="btn btn-outline-success"><a href="/retrieveFeedback">Edit Feedback/Review</a></button>
+      <div class="pr-2"></div>
+    </div>
+  </nav>
           <br>
+		  <br>
           <br>
           <br>
 		  <br>
+          <br>
+          <br>
+<div style="text-align:center;">
 <h1 class="display-4">Edit Medication</h1>
 <div>
 {% if count == 0 %}
@@ -55,9 +103,19 @@
 <p>There are {{ count }} Medicine.</p>
 {% endif %}
 </div>
+<div class="flexing">
+<form method="post">
+{{Searchingform.hidden_tag()}}
+<div style="width:850px;">
+{{ Searchingform.searched (class="form-control | my-1") }}
+</div>
 
-
-
+{{ Searchingform.submit(class="btn btn-success")}}
+    </form>
+</div>
+</div>
+          <br>
+          <br>
 <div class="flexing">
     {% for syrup in syrups_list %}
 <div class="cards">
@@ -157,6 +215,112 @@
 
     {% endfor %}
 </div>
+
+
+
+{% if ListofNames %}
+
+<div class="flexing">
+    {% for syrup in ListofNames %}
+<div class="cards">
+<img src="{{ url_for('static', filename='uploads/'+syrup.get_Picture())}}" style="width:300px; height:220px;">
+    <div class="container1">
+      <h4>Name: {{ syrup.get_name() }}</h4>
+        <h5>Price: {{ syrup.get_price() }}$</h5>
+        {% if syrup.get_stock() > 30 %}
+    <h5>Stock: {{ syrup.get_stock() }}</h5>
+    {%elif syrup.get_stock() <= 30 %}
+    <h5 style="color:red;">Stock: {{ syrup.get_stock() }}</h5>
+    {%endif%}
+        <form action="{{url_for('delete_syrup', id=syrup.get_id())}}" method="POST">
+            <div style="padding-top:38px;">
+            <a href="#" class='text-decoration-none btn btn-primary' data-bs-toggle='modal' data-bs-target='#ViewModal2_{{syrup.get_id()}}' style="width:33%;float:left;">
+                            View Details
+</a>
+            </div>
+
+<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#TheModal2_{{syrup.get_id()}}" style="float:right;">
+  Delete
+</button>
+
+            <!--view modal-->
+            <div class='modal fade' id='ViewModal2_{{syrup.get_id()}}' tabindex='-1' aria-hidden='true'>
+            <div class='modal-dialog'>
+                <div class='modal-content' style="border: #00bcd4 5px solid;">
+                    <div class="modal-body" style="background-color:#ECECEC;">
+
+                            <h3 class='card-title'>Product Details:</h3>
+
+                        <img src="{{ url_for('static', filename='uploads/'+syrup.get_Picture())}}" style="width:300px; height:220px;">
+                        <br>
+                            <h5>Name : {{syrup.get_name()}}</h5>
+                            <h5>Price : {{syrup.get_price()}}$</h5>
+
+                                    {% if syrup.get_stock() > 30 %}
+    <h5 class="fit">Stock: {{ syrup.get_stock() }}</h5>
+    {%elif syrup.get_stock() <= 30 %}
+    <h5 style="color:red;" class="fit">Stock: {{ syrup.get_stock() }}</h5>
+    {%endif%}
+
+                       <a href="/Add_Stock/{{syrup.get_id()}}" class="Buttonstyle">
+
+  Add Stock
+
+        </a>
+
+                            <h5>Size : {{syrup.get_Volume()}}</h5>
+
+                            <h5>Expiry date : {{syrup.get_Expiry()}}</h5>
+
+                            <h5>Description : {{syrup.get_Description()}}</h5>
+                        <br>
+
+
+                  <a href="/UpdatingSyrups/{{syrup.get_id()}}" class="btn btn-warning" style="float:right;">
+  Update Values
+        </a>
+                                  <a href="/Upload_Files/{{syrup.get_id()}}" class="btn btn-warning" style="float:left;">
+  Add/Update Image
+        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+                <!-- The Modal -->
+<div class="modal" id="TheModal2_{{syrup.get_id()}}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Delete Confirmation</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        Are you sure you want to delete {{syrup.get_name()}}?
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <input type="submit" value="Delete" class="btn btn-danger">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</form>
+    </div>
+</div>
+
+    {% endfor %}
+</div>
+
+{% endif %}
 
 <a href="Medication_Management"><button type="button" class="btn btn-primary">Add Medication</button></a>
 
