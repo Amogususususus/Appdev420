@@ -39,11 +39,11 @@ def eventSearchFunction(searchItem):
         print('Error in handling database!')
 
     try:
-        searchData = int(searchItem)
-        print('searchItem is an integer')
+        searchData = str(searchItem).lower()
+
     except:
         searchData = str(searchItem).lower()
-        print('searchItem is a string')
+
 
     for key in syrups_dict:
         syrup = syrups_dict.get(key)
@@ -53,7 +53,7 @@ def eventSearchFunction(searchItem):
                 NameList.append(syrup)
 
 
-    print(NameList)
+
 
 
 class Adding_Stock_Form(FlaskForm):
@@ -171,7 +171,7 @@ def retrieve_Syrup():
 
         NameList_searchPage = NameList
 
-        print(NameList_searchPage)
+
 
         return render_template('retrieveSyrup.html', Searchingform=Searchingform, ListofNames=NameList_searchPage)
 
