@@ -40,19 +40,25 @@
   cursor: pointer;
   border-radius:4px;
   margin-left:30px;
+  transition:0.2s ease-in-out;
+  height:40px;
     }
     .Buttonstyle:hover{
     background-color: #00bcd4;
     color: white;
     transition:0.2s ease-in-out;
     }
+.overflowbug{
+height:300px;
+width:450px;
+overflow:scroll;
+}
     </style>
 </head>
 <nav class="navbar navbar-expand-md navbar-light fixed-top bg-white ">
     <a class="navbar-brand" href="#"><img src="https://cdn.discordapp.com/attachments/824290507848024097/1055927102387519569/image.png" class="img-fluid" alt="Responsive image" style="width:4em;height:4em;"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
-
     </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <ul class="navbar-nav mr-auto">
@@ -96,26 +102,46 @@
           <br>
 <div style="text-align:center;">
 <h1 class="display-4">Edit Medication</h1>
-<div>
-{% if count == 0 %}
-<p>There are no Archived Medicine.</p>
-{% else %}
-<p>There are {{ count }} Medicine.</p>
-{% endif %}
-</div>
 <div class="flexing">
-<form method="post">
+<form method="post" class="form-inline mt-2 mt-md-0">
+    <div class="container">
+  <div class="row">
 {{Searchingform.hidden_tag()}}
-<div style="width:850px;">
-{{ Searchingform.searched (class="form-control | my-1") }}
+<div class="col" style="padding-left:0px;padding-right:0px;">
+<input class="form-control mr-sm-2" type="text" placeholder="Search for Medication..." aria-label="Search" style="width:45em;" name="searched">
 </div>
-
-{{ Searchingform.submit(class="btn btn-success")}}
+      <div class="col-sm  my-auto" style="padding-left:0px;padding-right:0px;">
+      <a href="{{url_for('retrieve_Syrup')}}" class="Buttonstyle" style="display:inline;">Return</a>
+              </div>
+  </div>
+    </div>
     </form>
 </div>
+<br>
+<div class="flexing">
+    <div class="dropdown">
+<form method="post" class="form-inline mt-2 mt-md-0">
+    {{ form.hidden_tag()}}
+<div class="pr-2 pl-2 formStyle">
+    {{ form.Filter(class="input-group-text bg-transparent") }}
+</div>
+      <input type="submit" value="Submit" name="submit" class="Buttonstyle">
+</form>
+        </div>
+</div>
 </div>
           <br>
           <br>
+{% if syrups_list %}
+<div style="text-align:center;font-weight: bold;font-size: 30px;">Showing Results for All Medications</div>
+<div style="text-align:center;font-size: 25px;">
+{% if count == 0 %}
+<p>There are no Archived Medication.</p>
+{% else %}
+<p>There are {{ count }} Medications.</p>
+{% endif %}
+</div>
+
 <div class="flexing">
     {% for syrup in syrups_list %}
 <div class="cards">
@@ -168,7 +194,7 @@
 
                             <h5>Expiry date : {{syrup.get_Expiry()}}</h5>
 
-                            <h5>Description : {{syrup.get_Description()}}</h5>
+                            <h5>Description :</h5> <div class="overflowbug" style="  text-align: justify; ">{{syrup.get_Description()}}</div>
                         <br>
 
 
@@ -215,11 +241,19 @@
 
     {% endfor %}
 </div>
-
+{% endif %}
 
 
 {% if ListofNames %}
 
+<div style="text-align:center;font-weight: bold;font-size: 30px;">Showing Results for "{{Searchingform.searched.data}}"</div>
+<div style="text-align:center;font-size: 25px;">
+{% if count == 0 %}
+<p>There are no Archived Medication.</p>
+{% else %}
+<p>There are {{ count }} Medications.</p>
+{% endif %}
+</div>
 <div class="flexing">
     {% for syrup in ListofNames %}
 <div class="cards">
@@ -272,7 +306,7 @@
 
                             <h5>Expiry date : {{syrup.get_Expiry()}}</h5>
 
-                            <h5>Description : {{syrup.get_Description()}}</h5>
+                            <h5>Description :</h5> <div class="overflowbug" style="  text-align: justify; ">{{syrup.get_Description()}}</div>
                         <br>
 
 
@@ -321,6 +355,119 @@
 </div>
 
 {% endif %}
+
+{% if SortedFinalList %}
+<div style="text-align:center;font-weight: bold;font-size: 30px;">Showing Results for All Medications</div>
+<div style="text-align:center;font-size: 25px;">
+{% if countforsortList == 0 %}
+<p>There are no Archived Medication.</p>
+{% else %}
+<p>There are {{ countforsortList }} Medications.</p>
+{% endif %}
+</div>
+
+<div class="flexing">
+    {% for syrup in SortedFinalList %}
+<div class="cards">
+<img src="{{ url_for('static', filename='uploads/'+syrup.get_Picture())}}" style="width:300px; height:220px;">
+    <div class="container1">
+      <h4>Name: {{ syrup.get_name() }}</h4>
+        <h5>Price: {{ syrup.get_price() }}$</h5>
+        {% if syrup.get_stock() > 30 %}
+    <h5>Stock: {{ syrup.get_stock() }}</h5>
+    {%elif syrup.get_stock() <= 30 %}
+    <h5 style="color:red;">Stock: {{ syrup.get_stock() }}</h5>
+    {%endif%}
+        <form action="{{url_for('delete_syrup', id=syrup.get_id())}}" method="POST">
+            <div style="padding-top:38px;">
+            <a href="#" class='text-decoration-none btn btn-primary' data-bs-toggle='modal' data-bs-target='#ViewModalforSorted_{{syrup.get_id()}}' style="width:33%;float:left;">
+                            View Details
+</a>
+            </div>
+
+<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#TheModalforSorted_{{syrup.get_id()}}" style="float:right;">
+  Delete
+</button>
+
+            <!--view modal-->
+            <div class='modal fade' id='ViewModalforSorted_{{syrup.get_id()}}' tabindex='-1' aria-hidden='true'>
+            <div class='modal-dialog'>
+                <div class='modal-content' style="border: #00bcd4 5px solid;">
+                    <div class="modal-body" style="background-color:#ECECEC;">
+
+                            <h3 class='card-title'>Product Details:</h3>
+
+                        <img src="{{ url_for('static', filename='uploads/'+syrup.get_Picture())}}" style="width:300px; height:220px;">
+                        <br>
+                            <h5>Name : {{syrup.get_name()}}</h5>
+                            <h5>Price : {{syrup.get_price()}}$</h5>
+
+                                    {% if syrup.get_stock() > 30 %}
+    <h5 class="fit">Stock: {{ syrup.get_stock() }}</h5>
+    {%elif syrup.get_stock() <= 30 %}
+    <h5 style="color:red;" class="fit">Stock: {{ syrup.get_stock() }}</h5>
+    {%endif%}
+
+                       <a href="/Add_Stock/{{syrup.get_id()}}" class="Buttonstyle">
+
+  Add Stock
+
+        </a>
+
+                            <h5>Size : {{syrup.get_Volume()}}</h5>
+
+                            <h5>Expiry date : {{syrup.get_Expiry()}}</h5>
+
+                            <h5>Description :</h5> <div class="overflowbug" style="  text-align: justify; ">{{syrup.get_Description()}}</div>
+                        <br>
+
+
+                  <a href="/UpdatingSyrups/{{syrup.get_id()}}" class="btn btn-warning" style="float:right;">
+  Update Values
+        </a>
+                                  <a href="/Upload_Files/{{syrup.get_id()}}" class="btn btn-warning" style="float:left;">
+  Add/Update Image
+        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+                <!-- The Modal -->
+<div class="modal" id="TheModalforSorted_{{syrup.get_id()}}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Delete Confirmation</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        Are you sure you want to delete {{syrup.get_name()}}?
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <input type="submit" value="Delete" class="btn btn-danger">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</form>
+    </div>
+</div>
+
+    {% endfor %}
+</div>
+{% endif %}
+
+
 
 <a href="Medication_Management"><button type="button" class="btn btn-primary">Add Medication</button></a>
 

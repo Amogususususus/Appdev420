@@ -12,7 +12,18 @@
 <div class="cards7 bg-light">
     <form method='POST' enctype='multipart/form-data' style="text-align:center;">
         {{form.hidden_tag()}}
-        {{form.file()}}
+         {%if form.file.errors%}
+                <div>
+                    {{form.file(class='form-control | my-2 | border-danger')}}
+                </div>
+                {%for errors in form.file.errors%}
+                    <span class='text-danger | float-end'>{{errors}}</span>
+                {%endfor%}
+                {%else%}
+                <div>
+                    {{form.file(class='form-control | my-2')}}
+                </div>
+            {%endif%}
         {{form.submitting()}}
     </form>
     <button onclick="history.back()" class="btn btn-secondary">Go Back</button>
