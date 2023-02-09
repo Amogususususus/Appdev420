@@ -508,6 +508,7 @@ def create_appointment():
                                                   create_appointment_form.time_ment.data,
                                                   last_object.get_id())
 
+        appointment.set_status_ment("Attended")
         appointments_dict[appointment.get_id()] = appointment
         db['Appointments'] = appointments_dict
 
@@ -616,25 +617,6 @@ def retrieve_appointments_admin():
         appointments_list.append(appointment)
 
     return render_template('Admin_Homepage.html', count=len(appointments_list), appointments_list=appointments_list)
-
-@app.route('/retrieveAppointmentsSortedAdmin')
-def retrieve_appointments_sorted_admin():
-    appointments_dict = {}
-    db = shelve.open('appointment.db', 'r')
-    try:
-        if 'Appointments' in db:
-            appointments_dict = db['Appointments']
-        else:
-            db['Appointments'] = appointments_dict
-    except:
-        print('Error')
-
-    appointments_list = []
-    for key in appointments_dict:
-        appointment = appointments_dict.get(key)
-        appointments_list.append(appointment)
-
-    return render_template('retrieveAppointmentsSortedAdmin.html', count=len(appointments_list), appointments_list=appointments_list)
 
 @app.route('/updateAppointmentAdmin/<int:id>/', methods=['GET', 'POST'])
 def update_appointment_admin(id):
