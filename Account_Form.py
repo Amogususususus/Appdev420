@@ -1,5 +1,6 @@
 from wtforms import Form, StringField, RadioField, SelectField, TextAreaField, validators, ValidationError
 from wtforms.fields import EmailField, IntegerField, PasswordField
+from wtforms.validators import EqualTo
 import shelve
 
 class CreateUserForm(Form):
@@ -62,6 +63,12 @@ class LoginForm(Form):
         if id is not None:
             if self.password.data != id[1]:
                 raise ValidationError('Incorrect Email or Password')
+
+
+class ResetPasswordForm(Form):
+    email = EmailField('Email', [validators.Email(), validators.DataRequired()])
+    password = PasswordField('Password', [validators.Length(min=8, max=16), validators.DataRequired(),EqualTo('confirm_password', message='Passwords must match')])
+    confirm_password = PasswordField('Confirm Password')
 
 
 
