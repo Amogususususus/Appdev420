@@ -274,62 +274,6 @@ def Order_Medication():
 
     return render_template('Order_Medication.html',count=len(syrups_list), syrups_list=syrups_list, Searchingform=Searchingform, form=form)
 
-def retrieve_db(shelve_name):
-    with shelve.open(shelve_name) as db:
-        return db
-
-
-def commit_db(shelve_name, new_list):
-    with shelve.open(shelve_name) as db:
-        db=new_list
-        db.sync()
-    return 'Commit successful'
-
-@app.route('/product_page', methods=['POST', 'GET'])
-def product_page():
-    if request.method == 'GET':
-        product_id = session['id']
-        product_list = retrieve_db('syrup.db')
-        if product_id in product_list:
-            products = product_list[product_id]
-            amount = session['cart']
-            return render_template("product-index.html", products=products, amount=amount)
-
-    elif request.method == "POST":
-        select_id = request.form.get('submit')
-        quantity = request.form.get('quantity')
-        db = retrieve_db('cart')
-        print(select_id,quantity)
-
-        if select_id in db.keys():
-            item = db[select_id]
-            existing = item['quantity']
-            quantity = int(int(existing)+int(quantity))
-            item['quantity'] = quantity
-            price = item['price']
-            total = f'{float(float(price)*int(quantity)):.2f}'
-            item['total'] = total
-            db[select_id] = item
-            commit_db('cart', db)
-        elif select_id not in db.keys():
-            price = request.form.get('price')
-            total = f'{float(float(price)*int(quantity)):.2f}'
-            item = {
-                'id': select_id,
-                'quantity': quantity,
-                'price': price,
-                'total': total,
-            }
-            db[select_id] = item
-            commit_db('cart', db)
-        product_list = retrieve_db('syrup.db')
-        if select_id in product_list:
-            products = product_list[select_id]
-        amount = len(db.keys())
-        session['cart'] = amount
-        amount = session['cart']
-        return render_template("product-index.html", products=products, amount=amount)
-
 
 
 @app.route('/UpdatingSyrups/<int:id>/', methods=['GET', 'POST'])
