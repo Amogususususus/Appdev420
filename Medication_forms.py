@@ -10,6 +10,10 @@ class FilterForm(FlaskForm):
     Filter=SelectField(label=("Filter by Lowest stock"), choices=[('unfiltered', ' Lowest Stock unfiltered '), ('filtered', ' Lowest Stock filtered ')], validators=[Optional()])
     submit=SubmitField(label=('Sort'))
 
+class SearchForm(FlaskForm):
+    searched=StringField(label=("Search"), validators=[DataRequired()], render_kw={'placeholder' : 'Search...'})
+    submit=SubmitField(label=('Search'))
+
 class Adding_Stock_Form(FlaskForm):
     Addition_Value = IntegerField("enter the amount you are adding")
     submit = SubmitField("Add")
@@ -17,10 +21,6 @@ class Adding_Stock_Form(FlaskForm):
 class UploadFileForm(FlaskForm):
     file = FileField("File", validators=[FileRequired(), FileAllowed(['jpg', 'png', 'jpeg', 'gif', 'webp'], message='File Type Not Allowed!')], render_kw={'placeholder' : 'Enter File...'})
     submitting = SubmitField("Upload File")
-
-class SearchForm(FlaskForm):
-    searched=StringField(label=("Search"), validators=[DataRequired()], render_kw={'placeholder' : 'Search...'})
-    submit=SubmitField(label=('Search'))
 
 class CreateSyrupForm(FlaskForm):
     Medication_name = StringField(label=('Name of Medication:'), validators=[DataRequired(), Length(min=1, max=50, message='Name length must be between %(min)d and %(max)d characters')], render_kw={'placeholder' : 'Enter Name...'})
