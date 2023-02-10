@@ -290,7 +290,7 @@ def Add_Stock(id):
         db['Syrups'] = syrups_dict
 
         return redirect (url_for('retrieve_Syrup'))
-    return render_template('Update_Stock.html', form=form)
+    return render_template('Add_Stock.html', form=form)
 
 
 @app.route('/delete_syrups/<int:id>', methods=['POST'])

@@ -7,7 +7,7 @@ from datetime import date
 
 
 class FilterForm(FlaskForm):
-    Filter=SelectField(label=("Filter by Lowest stock"), choices=[('unfiltered', 'Stock unfiltered'), ('filtered', 'Stock filtered')], validators=[Optional()])
+    Filter=SelectField(label=("Filter by Lowest stock"), choices=[('unfiltered', ' Lowest Stock unfiltered '), ('filtered', ' Lowest Stock filtered ')], validators=[Optional()])
     submit=SubmitField(label=('Sort'))
 
 class Adding_Stock_Form(FlaskForm):
@@ -29,7 +29,7 @@ class CreateSyrupForm(FlaskForm):
     Size = StringField(label=('Size of Medication (per pack):'), validators=[DataRequired()], render_kw={'placeholder' : 'Enter Volume/weight of medication...'})
     Picture = TextAreaField('Please enter the name of the file with no spaces!', validators=[Optional()])
     Expiration = DateField('Date of Expiry for Current batch', format='%Y-%m-%d')
-    Description_Medication = TextAreaField(label=('Description of Medication:'), validators=[DataRequired()])
+    Description_Medication = TextAreaField(label=('Description of Medication:'), validators=[DataRequired()], render_kw={'placeholder' : 'Enter Description...'})
     submit=SubmitField(label=('Submit'))
 
     def validate_Medication_name(self, Medication_name):
