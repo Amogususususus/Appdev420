@@ -1,12 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.utils import secure_filename
 import os
-from Medication_forms import CreateSyrupForm, SearchForm
+from Medication_forms import CreateSyrupForm, SearchForm, UploadFileForm, Adding_Stock_Form, FilterForm
 import Customer
 import Syrup
-from flask_wtf import FlaskForm
-from wtforms import SubmitField
-from flask_wtf.file import FileField, FileAllowed, FileRequired
 from Account_Form import *
 from Meeting_Form import AppointmentForm, updateAppointmentForm
 import Appointment
@@ -22,10 +19,49 @@ UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ################################here begins Helun's code#################################
 
-NameList = []
-def eventSearchFunction(searchItem):
+NameSearchList = []
+List_Sorting = []
+List_Sorting_Final = []
 
-    NameList.clear()
+def SortStock():
+    List_Sorting.clear()
+    List_Sorting_Final.clear()
+
+    syrups_dict = {}
+    db = shelve.open('syrup.db')
+
+    try:
+        if 'Syrups' in db:
+            syrups_dict = db['Syrups']
+        else:
+            db['Syrups'] = syrups_dict
+    except:
+        print('Error in handling database!')
+
+    for i in syrups_dict:
+        syrup = syrups_dict.get(i)
+        stock = syrup.get_stock()
+
+        if stock not in List_Sorting:
+            List_Sorting.append(stock)
+            List_Sorting.sort()
+
+
+
+    for i in List_Sorting:
+        for key in syrups_dict:
+            syrups = syrups_dict.get(key)
+            if syrups.get_stock() == int(i):
+                if syrups not in List_Sorting_Final:
+                    List_Sorting_Final.append((syrups))
+
+
+
+
+
+def SearchFunction(searchItem):
+
+    NameSearchList.clear()
 
     syrups_dict = {}
     db = shelve.open('syrup.db')
@@ -50,19 +86,10 @@ def eventSearchFunction(searchItem):
 
         if isinstance(searchData, str):
             if searchData == syrup.get_name() or searchData in str(syrup.get_name()).lower():
-                NameList.append(syrup)
+                NameSearchList.append(syrup)
 
 
 
-
-
-class Adding_Stock_Form(FlaskForm):
-    Addition_Value = IntegerField("enter the amount you are adding")
-    submit = SubmitField("Add")
-
-class UploadFileForm(FlaskForm):
-    file = FileField("File", validators=[FileRequired(), FileAllowed(['jpg', 'png', 'jpeg', 'gif', 'webp'], message='File Type Not Allowed!')])
-    submitting = SubmitField("Upload File")
 
 @app.route('/')
 def home():
@@ -96,7 +123,7 @@ def Upload_Files(id):
         file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(file.filename))) # Then save the file
         syrup.set_Picture(filename)
         db['Syrups'] = syrups_dict
-
+        flash('Medication Already Exists, use a different name!', 'NameAlreadyExistError')
         return redirect (url_for('retrieve_Syrup'))
 
     return render_template('Upload_Files.html', form=form)
@@ -130,13 +157,13 @@ def create_Syrup():
         if Create_Syrup_form.Medication_name.data not in syrups_list_names:
 
             if len(syrups_dict) == 0:
-                syrup = Syrup.Syrup(Create_Syrup_form.Medication_name.data, Create_Syrup_form.Price_Medication.data,
+                syrup = Syrup(Create_Syrup_form.Medication_name.data, Create_Syrup_form.Price_Medication.data,
                             Create_Syrup_form.Stock_Medication.data,
                             Create_Syrup_form.Size.data, Create_Syrup_form.Description_Medication.data, Create_Syrup_form.Expiration.data, len(syrups_dict))
 
             else:
                 last_object = syrups_list[-1]
-                syrup = Syrup.Syrup(Create_Syrup_form.Medication_name.data, Create_Syrup_form.Price_Medication.data,
+                syrup = Syrup(Create_Syrup_form.Medication_name.data, Create_Syrup_form.Price_Medication.data,
                             Create_Syrup_form.Stock_Medication.data,
                             Create_Syrup_form.Size.data, Create_Syrup_form.Description_Medication.data, Create_Syrup_form.Expiration.data, last_object.get_id())
 
@@ -152,6 +179,7 @@ def create_Syrup():
 def retrieve_Syrup():
 
     Searchingform = SearchForm()
+    form = FilterForm()
 
     if Searchingform.validate_on_submit() and request.method == 'POST':
 
@@ -167,13 +195,21 @@ def retrieve_Syrup():
 
         SearchData = Searchingform.searched.data
 
-        eventSearchFunction(SearchData)
+        SearchFunction(SearchData)
 
-        NameList_searchPage = NameList
+        NameList_searchPage = NameSearchList
 
 
+        return render_template('retrieveSyrup.html', Searchingform=Searchingform, ListofNames=NameList_searchPage, count=len(NameSearchList), form=form)
 
-        return render_template('retrieveSyrup.html', Searchingform=Searchingform, ListofNames=NameList_searchPage)
+    if form.validate_on_submit() and request.method == 'POST':
+        if form.Filter.data == 'filtered':
+            SortStock()
+
+            sortedList=List_Sorting_Final
+
+            return render_template('retrieveSyrup.html', form=form, countforsortList=len(List_Sorting_Final), SortedFinalList=sortedList, Searchingform=Searchingform)
+
 
     syrups_dict = {}
     db = shelve.open('syrup.db', 'r')
@@ -191,7 +227,53 @@ def retrieve_Syrup():
         syrups_list.append(syrup)
 
 
-    return render_template('retrieveSyrup.html',count=len(syrups_list), syrups_list=syrups_list, Searchingform=Searchingform)
+
+    return render_template('retrieveSyrup.html',count=len(syrups_list), syrups_list=syrups_list, Searchingform=Searchingform, form=form)
+
+@app.route('/Order_Medication', methods=['GET', 'POST'])
+def Order_Medication():
+
+    Searchingform = SearchForm()
+    form = FilterForm()
+
+    if Searchingform.validate_on_submit() and request.method == 'POST':
+
+        syrups_dict = {}
+        db = shelve.open('syrup.db', 'r')
+        try:
+            if 'Syrups' in db:
+                syrups_dict = db['Syrups']
+            else:
+                db['Syrups'] = syrups_dict
+        except:
+            print('Error, database for medication cannot be retrieved')
+
+        SearchData = Searchingform.searched.data
+
+        SearchFunction(SearchData)
+
+        NameList_searchPage = NameSearchList
+
+
+        return render_template('Order_Medication.html', Searchingform=Searchingform, ListofNames=NameList_searchPage, count=len(NameSearchList), form=form)
+
+    syrups_dict = {}
+    db = shelve.open('syrup.db', 'r')
+    try:
+        if 'Syrups' in db:
+            syrups_dict = db['Syrups']
+        else:
+            db['Syrups'] = syrups_dict
+    except:
+        print('Error, database for medication cannot be retrieved')
+
+    syrups_list = []
+    for key in syrups_dict:
+        syrup = syrups_dict.get(key)
+        syrups_list.append(syrup)
+
+    return render_template('Order_Medication.html',count=len(syrups_list), syrups_list=syrups_list, Searchingform=Searchingform, form=form)
+
 
 
 @app.route('/UpdatingSyrups/<int:id>/', methods=['GET', 'POST'])
@@ -253,7 +335,7 @@ def Add_Stock(id):
         db['Syrups'] = syrups_dict
 
         return redirect (url_for('retrieve_Syrup'))
-    return render_template('Update_Stock.html', form=form)
+    return render_template('Add_Stock.html', form=form)
 
 
 @app.route('/delete_syrups/<int:id>', methods=['POST'])

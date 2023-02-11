@@ -1,60 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+            <link rel = "icon" href =
+"https://cdn.discordapp.com/attachments/824290507848024097/1055927102387519569/image.png"
+        type = "image/x-icon">
     <style>
-        *{
-        box-sizing:border-box;}
+*{
+  box-sizing:border-box;
+}
+body {
+    margin:0;
+    font-family: "Univers 57 Condensed", "univers Font";
+    color:black;
+    font-size:17.5px;
+    text-decoration: none;
+}
+ul{
+	list-style: none;
+}
+.flexing {
+    align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
 
-        body {
-        margin:0;
-        text-decoration: none;}
+.cards {
+ display:inline-block;
+ background-color:#ECECEC;
+ width:400px;
+ height:440px;
+ border-radius:5px;
+ object-fit:contain;
+ border:solid 5px #efc3bf;
+ padding:15px;
+ transition: box-shadow 0.5s;
+ margin:9px;
+ text-align: center;
+  transition: 0.5s;
+}
+.cards:hover {
+ width:405px;
+ height:445px;
+border:solid 5px #00bcd4;
+color:red;
+box-shadow:9px 11px 10px #888888;
+}
 
-        ul{
-        list-style: none;}
+.container1{
+color:black;
+text-align:left;
+padding-top:6px;
+}
 
-        .flexing {
-        align-items: flex-start;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;}
+.mentdiv {
+text-align: left;
+display: inline-block;
+width: 85%;
+min-height: 1100px;
+height: auto;
+border: solid #efc3bf;
+padding: 15px;
+border-radius: 10px;
+margin-left: 110px;
+margin-top: 50px;
+margin-bottom: 50px;
+}
 
-        .cards {
-        display:inline-block;
-        background-color:#ECECEC;
-        width:400px;
-        height:440px;
-        border-radius:5px;
-        object-fit:contain;
-        border:solid 5px #efc3bf;
-        padding:15px;
-        transition: box-shadow 0.5s;
-        margin:5px;
-        text-align: center;
-        transition: 0.5s;}
 
-        .cards:hover {
-        width:405px;
-        height:445px;
-        border:solid 5px #00bcd4;
-        color:red;}
-
-        .container1{
-        color:black;
-        text-align:left;
-        padding-top:6px;}
-
-        .mentdiv {
-        text-align: left;
-        display: inline-block;
-        width: 85%;
-        min-height: 1100px;
-        height: auto;
-        border: solid #efc3bf;
-        padding: 15px;
-        border-radius: 10px;
-        margin-left: 110px;
-        margin-top: 50px;
-        margin-bottom: 50px;}
     </style>
 
     <meta charset="UTF-8">
@@ -72,6 +85,7 @@
 
     <div class="container-fluid">
         {% block content %}
+
         {% endblock %}
     </div>
 
