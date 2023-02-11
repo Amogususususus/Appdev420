@@ -10,6 +10,7 @@ import Appointment
 from Forms2 import CreateFeedbackForm
 import shelve, Feedback
 from Syrup import *
+from datetime import date
 
 app = Flask(__name__)
 app.secret_key = "123789123803ghj127891237831asd27891237892qwe3423423434234423234"
@@ -555,6 +556,8 @@ def create_customer():
         return redirect(url_for('login'))
     return render_template('register.html', form=create_customer_form)
 
+
+
 @app.route('/retrieveCustomers')
 def retrieve_customers():
     customers_dict = {}
@@ -631,10 +634,17 @@ def delete_customer(id):
 
     return redirect(url_for('retrieve_customers'))
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
 ###############This is where Benson's code ends###################################
 
 ####################This is where Isaac's code begins#######################################
 
+# CUSTOMER SIDE
+today = date.today()
 @app.route('/createAppointment', methods=['GET', 'POST'])
 def create_appointment():
     create_appointment_form = AppointmentForm(request.form)
@@ -668,6 +678,8 @@ def create_appointment():
                                                   create_appointment_form.doctor_ment.data,
                                                   create_appointment_form.date_ment.data,
                                                   create_appointment_form.time_ment.data,
+                                                  create_appointment_form.attendance_ment.data,
+                                                  create_appointment_form.meeting_status_ment.data,
                                                   len(appointments_dict))
 
         else:
@@ -683,9 +695,10 @@ def create_appointment():
                                                   create_appointment_form.doctor_ment.data,
                                                   create_appointment_form.date_ment.data,
                                                   create_appointment_form.time_ment.data,
+                                                  create_appointment_form.attendance_ment.data,
+                                                  create_appointment_form.meeting_status_ment.data,
                                                   last_object.get_id())
 
-        appointment.set_status_ment("Attended")
         appointments_dict[appointment.get_id()] = appointment
         db['Appointments'] = appointments_dict
 
@@ -709,7 +722,9 @@ def retrieve_appointments():
     appointments_list = []
     for key in appointments_dict:
         appointment = appointments_dict.get(key)
-        appointments_list.append(appointment)
+        if appointment.get_meeting_status_ment() != 'Over':
+            if appointment.get_date_ment().strftime("%Y-%m-%d") > today.strftime("%Y-%m-%d") or appointment.get_date_ment().strftime("%Y-%m-%d") == today.strftime("%Y-%m-%d"):
+                appointments_list.append(appointment)
 
     return render_template('retrieveAppointments.html', count=len(appointments_list), appointments_list=appointments_list)
 
@@ -733,6 +748,8 @@ def update_appointment(id):
         appointment.set_doctor_ment(update_appointment_form.doctor_ment.data)
         appointment.set_date_ment(update_appointment_form.date_ment.data)
         appointment.set_time_ment(update_appointment_form.time_ment.data)
+        appointment.set_attendance_ment(update_appointment_form.attendance_ment.data)
+        appointment.set_meeting_status_ment(update_appointment_form.meeting_status_ment.data)
 
         db['Appointments'] = appointments_dict
 
@@ -758,6 +775,8 @@ def update_appointment(id):
         update_appointment_form.doctor_ment.data = appointment.get_doctor_ment()
         update_appointment_form.date_ment.data = appointment.get_date_ment()
         update_appointment_form.time_ment.data = appointment.get_time_ment()
+        update_appointment_form.attendance_ment.data = appointment.get_attendance_ment()
+        update_appointment_form.meeting_status_ment.data = appointment.get_meeting_status_ment()
 
         return render_template('updateAppointment.html', form=update_appointment_form)
 
@@ -775,7 +794,6 @@ def delete_appointment(id):
     return redirect(url_for('retrieve_appointments'))
 
 # ADMIN SIDE
-
 @app.route('/Admin_Homepage')
 def retrieve_appointments_admin():
     appointments_dict = {}
@@ -791,7 +809,9 @@ def retrieve_appointments_admin():
     appointments_list = []
     for key in appointments_dict:
         appointment = appointments_dict.get(key)
-        appointments_list.append(appointment)
+        if appointment.get_meeting_status_ment() != 'Over':
+            if appointment.get_date_ment().strftime("%Y-%m-%d") > today.strftime("%Y-%m-%d") or appointment.get_date_ment().strftime("%Y-%m-%d") == today.strftime("%Y-%m-%d"):
+                appointments_list.append(appointment)
 
     return render_template('Admin_Homepage.html', count=len(appointments_list), appointments_list=appointments_list)
 
@@ -815,6 +835,8 @@ def update_appointment_admin(id):
         appointment.set_doctor_ment(update_appointment_admin_form.doctor_ment.data)
         appointment.set_date_ment(update_appointment_admin_form.date_ment.data)
         appointment.set_time_ment(update_appointment_admin_form.time_ment.data)
+        appointment.set_attendance_ment(update_appointment_admin_form.attendance_ment.data)
+        appointment.set_meeting_status_ment(update_appointment_admin_form.meeting_status_ment.data)
 
         db['Appointments'] = appointments_dict
 
@@ -840,8 +862,109 @@ def update_appointment_admin(id):
         update_appointment_admin_form.doctor_ment.data = appointment.get_doctor_ment()
         update_appointment_admin_form.date_ment.data = appointment.get_date_ment()
         update_appointment_admin_form.time_ment.data = appointment.get_time_ment()
+        update_appointment_admin_form.attendance_ment.data = appointment.get_attendance_ment()
+        update_appointment_admin_form.meeting_status_ment.data = appointment.get_meeting_status_ment()
 
         return render_template('updateAppointmentAdmin.html', form=update_appointment_admin_form)
+
+@app.route('/openRoomAdmin/<int:id>', methods=['POST'])
+def open_room_admin(id):
+    appointments_dict = {}
+    db = shelve.open('appointment.db', 'w')
+    appointments_dict = db['Appointments']
+
+    appointment = appointments_dict.get(id)
+    appointment.set_meeting_status_ment('Open')
+
+    db['Appointments'] = appointments_dict
+    db.close()
+
+    return redirect(url_for('retrieve_appointments_admin'))
+
+@app.route('/deleteAppointmentAdmin/<int:id>', methods=['POST'])
+def delete_appointment_admin(id):
+    appointments_dict = {}
+    db = shelve.open('appointment.db', 'w')
+    appointments_dict = db['Appointments']
+
+#   appointments_dict.pop(id)
+    appointment = appointments_dict.get(id)
+    appointment.set_meeting_status_ment('Over')
+
+    db['Appointments'] = appointments_dict
+    db.close()
+
+    return redirect(url_for('retrieve_appointments_admin'))
+
+@app.route('/retrievePastAppointmentsAdmin')
+def retrieve_past_appointments_admin():
+    appointments_dict = {}
+    db = shelve.open('appointment.db', 'r')
+    try:
+        if 'Appointments' in db:
+            appointments_dict = db['Appointments']
+        else:
+            db['Appointments'] = appointments_dict
+    except:
+        print('Error')
+
+    appointments_list = []
+    for key in appointments_dict:
+        appointment = appointments_dict.get(key)
+
+        if appointment.get_date_ment().strftime("%Y-%m-%d") < today.strftime("%Y-%m-%d") or appointment.get_meeting_status_ment() == 'Over':
+            appointments_list.append(appointment)
+
+    return render_template('retrievePastAppointmentsAdmin.html', count=len(appointments_list), appointments_list=appointments_list)
+
+@app.route('/changeAttendanceToUnattended/<int:id>', methods=['POST'])
+def change_to_unattended(id):
+    appointments_dict = {}
+    db = shelve.open('appointment.db', 'w')
+    appointments_dict = db['Appointments']
+
+    appointment = appointments_dict.get(id)
+    appointment.set_attendance_ment('Unattended')
+
+    db['Appointments'] = appointments_dict
+    db.close()
+
+    return redirect(url_for('retrieve_past_appointments_admin'))
+
+@app.route('/changeAttendanceToAttended/<int:id>', methods=['POST'])
+def change_to_attended(id):
+    appointments_dict = {}
+    db = shelve.open('appointment.db', 'w')
+    appointments_dict = db['Appointments']
+
+    appointment = appointments_dict.get(id)
+    appointment.set_attendance_ment('Attended')
+
+    db['Appointments'] = appointments_dict
+    db.close()
+
+    return redirect(url_for('retrieve_past_appointments_admin'))
+
+@app.route('/retrieveUnattendedAppointmentsAdmin')
+def retrieve_unattended_appointments_admin():
+    appointments_dict = {}
+    db = shelve.open('appointment.db', 'r')
+    try:
+        if 'Appointments' in db:
+            appointments_dict = db['Appointments']
+        else:
+            db['Appointments'] = appointments_dict
+    except:
+        print('Error')
+
+    appointments_list = []
+    for key in appointments_dict:
+        appointment = appointments_dict.get(key)
+
+        if appointment.get_attendance_ment() == 'Unattended':
+            appointments_list.append(appointment)
+
+    return render_template('retrieveUnattendedAppointmentsAdmin.html', count=len(appointments_list), appointments_list=appointments_list)
 
 ###############This is where Isaac's code ends###################################
 

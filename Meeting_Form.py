@@ -26,6 +26,57 @@ class AppointmentForm(Form):
                                                                                      ('6pm', '1800'),
                                                                                      ('7pm', '1900'),
                                                                                      ('8pm', '2000'), ], default='')
+    attendance_ment = SelectField('Attendance', [validators.DataRequired()], choices=[('Attended', 'Attended'), ('Unattended', 'Unattended')], default='Attended')
+    meeting_status_ment = SelectField('Meeting Status', [validators.DataRequired()], choices=[('Open', 'Open'), ('Closed', 'Closed'), ('Over', 'Over')], default='Closed')
+
+    def validate_name_ment(form, field):
+        for c in field.data:
+            if not (c.isalpha() or c.isdigit() or c == ' '):
+                raise ValidationError('Name cannot contain special characters.')
+
+        if field.data.isalpha() == False:
+            raise ValidationError('Name cannot contain numbers.')
+
+    def validate_nric_ment(form, field):
+        for s in field.data:
+            if s == ' ':
+                raise ValidationError('NRIC cannot contain spaces.')
+
+        for c in field.data:
+            if not (c.isalpha() or c.isdigit() or c == ' '):
+                raise ValidationError('NRIC cannot contain special characters.')
+
+        if field.data[0].upper() != "S" and field.data[0].upper() != "T":
+            raise ValidationError('First character has to be S or T.')
+
+        elif field.data[1:8].isnumeric() == False:
+            raise ValidationError('Characters 2 to 7 has to be numerical digits.')
+
+        elif field.data[-1].isalpha() == False:
+            raise ValidationError('Last character has to be a letter.')
+
+    def validate_address_ment(form, field):
+        for c in field.data:
+            if not (c.isalpha() or c.isdigit() or c == '#' or c == '-' or c == ' '):
+                raise ValidationError('Address cannot contain special characters other than # and -.')
+
+    def validate_remarks_ment(form, field):
+        for c in field.data:
+            if not (c.isalpha() or c.isdigit() or c == ',' or c == '.' or c == '?' or c == '!' or c == ' '):
+                raise ValidationError('Remarks cannot contain special characters other than punctuation marks.')
+
+    def validate_past_condition_ment(form, field):
+        for c in field.data:
+            if not (c.isalpha() or c.isdigit() or c == ',' or c == '.' or c == ' '):
+                raise ValidationError('Pre-Existing Medical Conditions cannot contain special characters.')
+
+    def validate_date_ment(form, field):
+        today = date.today()
+        if field.data.strftime("%Y-%m-%d") < today.strftime("%Y-%m-%d"):
+            raise ValidationError('Select an appointment date that is not in the past.')
+
+        elif field.data.strftime("%Y-%m-%d") == today.strftime("%Y-%m-%d"):
+            raise ValidationError('Select an appointment date that is not the current date.')
 
 class updateAppointmentForm(Form):
     name_ment = StringField('Name', [validators.Length(min=1, max=100), validators.DataRequired()], render_kw={'readonly':True})
@@ -51,6 +102,8 @@ class updateAppointmentForm(Form):
                                                                                      ('6pm', '1800'),
                                                                                      ('7pm', '1900'),
                                                                                      ('8pm', '2000'), ], default='')
+    attendance_ment = SelectField('Attendance', [validators.DataRequired()], choices=[('Attended', 'Attended'), ('Unattended', 'Unattended')], default='Attended')
+    meeting_status_ment = SelectField('Meeting Status', [validators.DataRequired()], choices=[('Open', 'Open'), ('Closed', 'Closed'), ('Over', 'Over')], default='Closed')
 
     def validate_name_ment(form, field):
         for c in field.data:

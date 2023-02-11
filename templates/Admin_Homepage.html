@@ -1,7 +1,13 @@
 {% extends "admin_index.html" %}
-{% block title %}View Appointments{% endblock %}
+{% block title %}All Upcoming Appointments{% endblock %}
 
 {% block content %}
+<br>
+<br>
+<br>
+<br>
+<br>
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,25 +17,33 @@
     a:hover { text-decoration: none; color:black;}
     a:active { text-decoration: none; }
     a {color:black;}
+
+    h1 {text-align: center}
+
+    p {text-align: center; font-size: 19px;}
+
+    .sorter {text-align: center;}
+
+    form {font-size: 17px;}
     </style>
 </head>
 
-<h1 class="display-4">All Appointments</h1>
-
 <div>
+  <h1 class="display-4">All Upcoming Appointments</h1>
   {% if count == 0 %}
-  <p>There are no appointments.</p>
+  <p>There are no upcoming appointments.</p>
   {% elif count == 1 %}
-  <p>There is 1 appointment scheduled.</p>
+  <p>There is 1 upcoming appointment scheduled.</p>
   {% else %}
-  <p>There are {{ count }} appointments scheduled.</p>
+  <p>There are {{ count }} upcoming appointments scheduled.</p>
   {% endif %}
 </div>
 
+{% if count != 0 %}
 <div>
     <table class="table table-hover" style="border: solid black;">
         <thead class="bg-dark text-white">
-        <tr>
+        <tr style="text-align: center;">
             <th>ID</th>
             <th>Name</th>
             <th>Age</th>
@@ -50,7 +64,7 @@
 
         <tbody>
         {% for appointment in appointments_list %}
-        <tr>
+        <tr style="text-align: center;">
             <td>{{ appointment.get_id() }}</td>
             <td>{{ appointment.get_name_ment() }}</td>
             <td>{{ appointment.get_age_ment() }}</td>
@@ -64,10 +78,19 @@
             <td>{{ appointment.get_date_ment() }}</td>
             <td>{{ appointment.get_time_ment() }}</td>
 
-            <td><a href="https://zoom.us/signin#/login" target="_blank" class="btn btn-primary">Open Room</a></td>
+            {% if appointment.get_meeting_status_ment() == "Open" %}
+            <td><a href="https://zoom.us/signin#/login" target="_blank" class="btn btn-success">Join Room</a></td>
+            {% elif appointment.get_meeting_status_ment() == "Closed" %}
+            <td>
+                <form action="{{url_for('open_room_admin', id=appointment.get_id())}}" method="POST">
+                    <input type="submit" value="Open Room" class="btn btn-primary">
+                </form>
+            </td>
+            {% endif %}
+
             <td><a href="/updateAppointmentAdmin/{{appointment.get_id()}}" class="btn btn-info">Follow Up</a></td>
             <td>
-                <form action="{{url_for('delete_appointment', id=appointment.get_id())}}" method="POST">
+                <form action="{{url_for('delete_appointment_admin', id=appointment.get_id())}}" method="POST">
                     <!-- Delete Button to Open the Modal -->
                     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#myModal_{{appointment.get_id()}}">End Session</button>
 
@@ -78,7 +101,7 @@
 
                                 <!-- Modal Header -->
                                 <div class="modal-header">
-                                    <h4 class="modal-title">End Session Confirmation</h4>
+                                    <h4 class="modal-title">Ending Session</h4>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
 
@@ -90,6 +113,7 @@
                                 <!-- Modal Footer -->
                                 <div class="modal-footer">
                                     <input type="submit" value="End" class="btn btn-danger">
+                                    <input type="submit" value="Prescibe Medication" class="btn btn-info">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                 </div>
                             </div>
@@ -102,4 +126,5 @@
         </tbody>
     </table>
 </div>
+{% endif %}
 {% endblock %}

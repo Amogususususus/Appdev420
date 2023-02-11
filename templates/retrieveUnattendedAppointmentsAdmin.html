@@ -1,5 +1,5 @@
-{% extends "user_index.html" %}
-{% block title %}Upcoming Appointments{% endblock %}
+{% extends "admin_index.html" %}
+{% block title %}Unattended Appointments{% endblock %}
 
 {% block content %}
 <br>
@@ -25,16 +25,16 @@
 </head>
 
 <div>
-  <h1 class="display-4">Your Upcoming Appointments</h1>
+  <h1 class="display-4">All Unattended Appointments</h1>
   {% if count == 0 %}
-  <p>You have no upcoming appointments</p>
+  <p>There are no unattended appointments</p>
   {% elif count == 1 %}
-  <p>You have 1 upcoming appointment scheduled</p>
+  <p>There is 1 unattended appointment</p>
   {% else %}
-  <p>You have {{ count }} upcoming appointments scheduled</p>
+  <p>There are {{ count }} unattended appointments</p>
   {% endif %}
 </div>
-<br>
+
 {% if count != 0 %}
 <div>
     <table class="table table-hover" style="border: solid black;">
@@ -72,11 +72,11 @@
             <td>{{ appointment.get_date_ment() }}</td>
             <td>{{ appointment.get_time_ment() }}</td>
 
-            {% if appointment.get_meeting_status_ment() == "Open" %}
-            <td><a href="https://zoom.us/signin#/login" target="_blank" class="btn btn-success">Join Room</a></td>
-            {% else %}
-            <td><a href="/updateAppointment/{{appointment.get_id()}}" class="btn btn-warning">Update</a></td>
-            {% endif %}
+            <td>
+                <form action="{{url_for('open_room_admin', id=appointment.get_id())}}" method="POST">
+                    <input type="submit" value="Notify Patient" class="btn btn-primary">
+                </form>
+            </td>
         </tr>
         {% endfor %}
         </tbody>
