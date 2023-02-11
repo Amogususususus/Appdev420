@@ -423,6 +423,8 @@ def create_customer():
         return redirect(url_for('login'))
     return render_template('register.html', form=create_customer_form)
 
+
+
 @app.route('/retrieveCustomers')
 def retrieve_customers():
     customers_dict = {}
@@ -498,6 +500,11 @@ def delete_customer(id):
     db.close()
 
     return redirect(url_for('retrieve_customers'))
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
 
 ###############This is where Benson's code ends###################################
 
