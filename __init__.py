@@ -471,7 +471,7 @@ def create_appointment():
                                                   create_appointment_form.time_ment.data,
                                                   last_object.get_id())
 
-        appointment.set_status_ment("Attended")
+        appointment.set_attendance_ment("Attended")
         appointments_dict[appointment.get_id()] = appointment
         db['Appointments'] = appointments_dict
 
@@ -628,6 +628,25 @@ def update_appointment_admin(id):
         update_appointment_admin_form.time_ment.data = appointment.get_time_ment()
 
         return render_template('updateAppointmentAdmin.html', form=update_appointment_admin_form)
+
+@app.route('/retrievePastAppointmentsAdmin')
+def retrieve_past_appointments_admin():
+    appointments_dict = {}
+    db = shelve.open('appointment.db', 'r')
+    try:
+        if 'Appointments' in db:
+            appointments_dict = db['Appointments']
+        else:
+            db['Appointments'] = appointments_dict
+    except:
+        print('Error')
+
+    appointments_list = []
+    for key in appointments_dict:
+        appointment = appointments_dict.get(key)
+        appointments_list.append(appointment)
+
+    return render_template('retrievePastAppointmentsAdmin.html', count=len(appointments_list), appointments_list=appointments_list)
 
 ###############This is where Isaac's code ends###################################
 
