@@ -512,7 +512,7 @@ def logout():
 ####################This is where Isaac's code begins#######################################
 
 # CUSTOMER SIDE
-
+today = date.today()
 @app.route('/createAppointment', methods=['GET', 'POST'])
 def create_appointment():
     create_appointment_form = AppointmentForm(request.form)
@@ -590,7 +590,9 @@ def retrieve_appointments():
     appointments_list = []
     for key in appointments_dict:
         appointment = appointments_dict.get(key)
-        appointments_list.append(appointment)
+        if appointment.get_meeting_status_ment() != 'Over':
+            if appointment.get_date_ment().strftime("%Y-%m-%d") > today.strftime("%Y-%m-%d") or appointment.get_date_ment().strftime("%Y-%m-%d") == today.strftime("%Y-%m-%d"):
+                appointments_list.append(appointment)
 
     return render_template('retrieveAppointments.html', count=len(appointments_list), appointments_list=appointments_list)
 
@@ -660,7 +662,6 @@ def delete_appointment(id):
     return redirect(url_for('retrieve_appointments'))
 
 # ADMIN SIDE
-today = date.today()
 @app.route('/Admin_Homepage')
 def retrieve_appointments_admin():
     appointments_dict = {}

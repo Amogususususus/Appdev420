@@ -1,5 +1,5 @@
 {% extends "user_index.html" %}
-{% block title %}View Appointments{% endblock %}
+{% block title %}Upcoming Appointments{% endblock %}
 
 {% block content %}
 <br>
@@ -27,7 +27,7 @@
 <div>
   <h1 class="display-4">Your Upcoming Appointments</h1>
   {% if count == 0 %}
-  <p>There are no upcoming appointments</p>
+  <p>You have no upcoming appointments</p>
   {% elif count == 1 %}
   <p>You have 1 upcoming appointment scheduled</p>
   {% else %}
