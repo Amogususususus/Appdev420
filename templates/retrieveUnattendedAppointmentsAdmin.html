@@ -25,16 +25,17 @@
 </head>
 
 <div>
-  <h1 class="display-4">All Past Appointments</h1>
+  <h1 class="display-4">Unattended Appointments</h1>
   {% if count == 0 %}
-  <p>There are no appointments</p>
+  <p>There are no unattended appointments</p>
   {% elif count == 1 %}
-  <p>There is 1 past appointment</p>
+  <p>There is 1 unattended appointment</p>
   {% else %}
-  <p>There are {{ count }} past appointments</p>
+  <p>There are {{ count }} unattended appointments</p>
   {% endif %}
 </div>
 
+{% if count != 0 %}
 <div>
     <table class="table table-hover" style="border: solid black;">
         <thead class="bg-dark text-white">
@@ -51,7 +52,6 @@
             <th>Doctor</th>
             <th>Date</th>
             <th>Time</th>
-            <th>ATTENDANCE</th>
             <th></th>
         </tr>
         </thead>
@@ -71,24 +71,16 @@
             <td>{{ appointment.get_doctor_ment() }}</td>
             <td>{{ appointment.get_date_ment() }}</td>
             <td>{{ appointment.get_time_ment() }}</td>
-            <td><h5>{{ appointment.get_attendance_ment() }}</h5></td>
 
-            {% if appointment.get_attendance_ment() == "Unattended" %}
             <td>
-                <form action="{{url_for('change_to_attended', id=appointment.get_id())}}" method="POST">
-                    <input type="submit" value="Change Attendance" class="btn btn-secondary">
+                <form action="{{url_for('open_room_admin', id=appointment.get_id())}}" method="POST">
+                    <input type="submit" value="Notify Patient" class="btn btn-primary">
                 </form>
             </td>
-            {% else %}
-            <td>
-                <form action="{{url_for('change_to_unattended', id=appointment.get_id())}}" method="POST">
-                    <input type="submit" value="Change Attendance" class="btn btn-secondary">
-                </form>
-            </td>
-            {% endif %}
         </tr>
         {% endfor %}
         </tbody>
     </table>
 </div>
+{% endif %}
 {% endblock %}

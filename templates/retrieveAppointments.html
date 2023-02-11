@@ -2,6 +2,12 @@
 {% block title %}View Appointments{% endblock %}
 
 {% block content %}
+<br>
+<br>
+<br>
+<br>
+<br>
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,25 +17,29 @@
     a:hover { text-decoration: none; color:black;}
     a:active { text-decoration: none; }
     a {color:black;}
+
+    h1 {text-align: center}
+
+    p {text-align: center; font-size: 19px;}
     </style>
 </head>
 
-<h1 class="display-4">Your Appointments</h1>
-
 <div>
+  <h1 class="display-4">Your Upcoming Appointments</h1>
   {% if count == 0 %}
-  <p>There are no appointments.</p>
+  <p>There are no upcoming appointments</p>
   {% elif count == 1 %}
-  <p>You have 1 appointment scheduled.</p>
+  <p>You have 1 upcoming appointment scheduled</p>
   {% else %}
-  <p>You have {{ count }} appointments scheduled.</p>
+  <p>You have {{ count }} upcoming appointments scheduled</p>
   {% endif %}
 </div>
-
+<br>
+{% if count != 0 %}
 <div>
-    <table class="table table-hover" style="border:solid black;">
-        <thead>
-        <tr>
+    <table class="table table-hover" style="border: solid black;">
+        <thead class="bg-dark text-white">
+        <tr style="text-align: center;">
             <th>ID</th>
             <th>Name</th>
             <th>Age</th>
@@ -43,13 +53,12 @@
             <th>Date</th>
             <th>Time</th>
             <th></th>
-            <th></th>
         </tr>
         </thead>
 
         <tbody>
         {% for appointment in appointments_list %}
-        <tr>
+        <tr style="text-align: center;">
             <td>{{ appointment.get_id() }}</td>
             <td>{{ appointment.get_name_ment() }}</td>
             <td>{{ appointment.get_age_ment() }}</td>
@@ -63,41 +72,15 @@
             <td>{{ appointment.get_date_ment() }}</td>
             <td>{{ appointment.get_time_ment() }}</td>
 
+            {% if appointment.get_meeting_status_ment() == "Open" %}
+            <td><a href="https://zoom.us/signin#/login" target="_blank" class="btn btn-success">Join Room</a></td>
+            {% else %}
             <td><a href="/updateAppointment/{{appointment.get_id()}}" class="btn btn-warning">Update</a></td>
-            <td>
-                <form action="{{url_for('delete_appointment', id=appointment.get_id())}}" method="POST">
-                    <!-- Delete Button to Open the Modal -->
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#myModal_{{appointment.get_id()}}">Delete</button>
-
-                    <!-- Modal -->
-                    <div class="modal" id="myModal_{{appointment.get_id()}}">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-
-                                <!-- Modal Header -->
-                                <div class="modal-header">
-                                    <h4 class="modal-title">Delete Confirmation</h4>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-
-                                <!-- Modal Body -->
-                                <div class="modal-body">
-                                    Are you sure you want to delete appointment for {{appointment.get_name_ment()}} with {{appointment.get_doctor_ment()}}?
-                                </div>
-
-                                <!-- Modal Footer -->
-                                <div class="modal-footer">
-                                    <input type="submit" value="Delete" class="btn btn-danger">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </td>
+            {% endif %}
         </tr>
         {% endfor %}
         </tbody>
     </table>
 </div>
+{% endif %}
 {% endblock %}

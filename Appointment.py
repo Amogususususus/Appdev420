@@ -1,6 +1,6 @@
 class Appointment:
     def __init__(self, name_ment, age_ment, gender_ment, nric_ment, email_ment, address_ment, remarks_ment,
-                 past_condition_ment, doctor_ment, date_ment, time_ment, attendance_ment, count):
+                 past_condition_ment, doctor_ment, date_ment, time_ment, attendance_ment, meeting_status_ment, count):
 
         self.__count = count
         self.__count += 1
@@ -17,6 +17,7 @@ class Appointment:
         self.__date_ment = date_ment
         self.__time_ment = time_ment
         self.__attendance_ment = attendance_ment
+        self.__meeting_status_ment = meeting_status_ment
 
     def get_id(self):
         return self.__ment_id
@@ -57,6 +58,9 @@ class Appointment:
     def get_attendance_ment(self):
         return self.__attendance_ment
 
+    def get_meeting_status_ment(self):
+        return self.__meeting_status_ment
+
     def set_count(self, count):
         self.__ment_id = count
 
@@ -95,3 +99,6 @@ class Appointment:
 
     def set_attendance_ment(self, attendance_ment):
         self.__attendance_ment = attendance_ment
+
+    def set_meeting_status_ment(self, meeting_status_ment):
+        self.__meeting_status_ment = meeting_status_ment
