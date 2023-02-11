@@ -1,0 +1,41 @@
+{% extends "anotherform.html" %}
+{% block title %}Product information{% endblock %}
+{% block content %}
+          <br>
+          <br>
+          <br>
+		  <br>
+          <br>
+          <br>
+          <br>
+    <meta charset="UTF-8">
+<div style="text-align:center;">
+<div class="cards7 bg-light" style="height:545px; width:60%;">
+    <form method='POST' enctype='multipart/form-data' style="text-align:center;">
+
+        {{form.hidden_tag()}}
+
+                    <label>{{ form.quantity.label }}</label>
+         {{form.quantity(class="form-control | my-2 ") }}
+
+        {{form.submit()}}
+    </form>
+              <br>
+          <br>
+          <br>
+		  <br>
+          <br>
+          <br>
+          <br>
+              <br>
+          <br>
+          <br>
+		  <br>
+          <br>
+          <br>
+          <br>
+
+    <button onclick="history.back()" class="btn btn-secondary">Go Back</button>
+    </div>
+</div>
+{% endblock %}

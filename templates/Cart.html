@@ -1,0 +1,183 @@
+{% extends "admin_index.html" %}
+{% block title %}View Medications{% endblock %}
+{% block content %}
+{% from "includes/_formHelper.html" import render_field %}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+    a:link { text-decoration: none; }
+    a:visited { text-decoration: none; }
+    a:hover { text-decoration: none; color:black;}
+    a:active { text-decoration: none; }
+    a {color:black;}
+    .fit{
+      display: inline-block;
+  margin: 0;
+    }
+    .divider{
+    width:25px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;}
+
+    .Buttonstyle{
+      background-color: transparent;
+  border: solid 3px #efc3bf;
+  color: black;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius:4px;
+  margin-left:30px;
+  transition:0.2s ease-in-out;
+  height:40px;
+    }
+    .Buttonstyle:hover{
+    border: solid 3px #00bcd4;
+    background-color: #00bcd4;
+    color: white;
+    transition:0.2s ease-in-out;
+    }
+.overflowbug{
+height:300px;
+width:450px;
+overflow:scroll;
+}
+.Buttonstyledelete{
+border:3px solid #efc3bf;
+  transition:0.2s ease-in-out;
+  background-color: transparent;
+  color: red;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius:4px;
+  margin-left:30px;
+  height:40px;
+}
+
+.Buttonstyledelete:hover{
+border:3px solid red;
+background-color: red;
+color: white;
+transition:0.2s ease-in-out;
+}
+#myBtn {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  z-index: 99;
+  outline: none;
+  color: #efc3bf;
+  text-decoration: none;
+  cursor: pointer;
+  transition:0.2s ease-in-out;
+  border-radius:4px;
+  animation: fadeIn 1.2s;
+
+}
+
+#myBtn:hover {
+    color: #00bcd4;
+    transition:0.2s ease-in-out;
+}
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+    </style>
+
+</head>
+
+          <br>
+		  <br>
+          <br>
+          <br>
+		  <br>
+          <br>
+          <br>
+<i onclick="topFunction()" id="myBtn" title="Go to top" class="bi bi-arrow-up-square-fill fa-3x"></i>
+
+<br>
+
+  <table class="table table-hover" style="border: solid black;">
+    <thead class="bg-dark text-white">
+      <tr>
+        <td>id</td>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Quantity</th>
+                  <th></th>
+                  <th></th>
+      </tr>
+    </thead>
+    <tbody>
+
+
+
+    {% for item in cart %}
+        <tr>
+          <td>{{ item['id'] }}</td>
+          <td>{{ item['Name'] }}</td>
+          <td>{{ item['Price'] }}</td>
+          <td>{{ item['Quantity'] }}</td>
+          <td><a href="/Update_Quantity/{{ item['id'] }}/" class="btn btn-warning">Change Quantity</a></td>
+          <td>
+            <form action="{{url_for('delete_items', id=item['id'])}}" method="POST">
+<button class="btn btn-danger" type="submit">
+  Delete
+</button>
+
+
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+
+    </tbody>
+  </table>
+{% if count == 0 %}
+<br>
+<br><br>
+
+<h1 style="text-align:center;">There is Nothing in this cart.</h1>
+{% endif %}
+<br>
+<br><br><br><br><br><br><br>
+
+<a href="/Order_Medication" class="btn btn-secondary">Go Back</a>
+<script>
+
+let mybutton = document.getElementById("myBtn");
+
+
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+    mybutton.style.display = "block";
+    mybutton.style.animation = "fadeIn 1.2s";
+  } else {
+    mybutton.style.display = "none";
+  }
+}
+
+
+function topFunction() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+}
+</script>
+{% endblock %}

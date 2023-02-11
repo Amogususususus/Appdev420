@@ -5,6 +5,14 @@ from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms.fields import DateField
 from datetime import date
 
+class orderform(FlaskForm):
+    address = StringField(label=('Address:'), validators=[DataRequired(), Length(min=1, max=50, message='Name length must be between %(min)d and %(max)d characters')], render_kw={'placeholder' : 'Enter Address...'})
+    name = StringField(label=('Name of Recipient:'), validators=[DataRequired(), Length(min=1, max=50, message='Name length must be between %(min)d and %(max)d characters')], render_kw={'placeholder' : 'Enter Name of recipient...'})
+    submit = SubmitField(label=('Make an Order'))
+
+class itemform(FlaskForm):
+    quantity=IntegerField(label=('Quantity: '), validators=[DataRequired()], render_kw={'placeholder' : 'Quantity...'})
+    submit=SubmitField(label=('Add to Cart'))
 
 class FilterForm(FlaskForm):
     Filter=SelectField(label=("Filter by Lowest stock"), choices=[('unfiltered', ' Lowest Stock unfiltered '), ('filtered', ' Lowest Stock filtered ')], validators=[Optional()])

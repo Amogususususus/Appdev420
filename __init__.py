@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.utils import secure_filename
 import os
-from Medication_forms import CreateSyrupForm, SearchForm, UploadFileForm, Adding_Stock_Form, FilterForm
+from Medication_forms import CreateSyrupForm, SearchForm, UploadFileForm, Adding_Stock_Form, FilterForm, itemform, orderform
 import Customer
 import Syrup
 from Account_Form import *
@@ -22,6 +22,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 NameSearchList = []
 List_Sorting = []
 List_Sorting_Final = []
+current_cart=[]
 
 def SortStock():
     List_Sorting.clear()
@@ -257,6 +258,7 @@ def Order_Medication():
 
         return render_template('Order_Medication.html', Searchingform=Searchingform, ListofNames=NameList_searchPage, count=len(NameSearchList), form=form)
 
+
     syrups_dict = {}
     db = shelve.open('syrup.db', 'r')
     try:
@@ -274,7 +276,137 @@ def Order_Medication():
 
     return render_template('Order_Medication.html',count=len(syrups_list), syrups_list=syrups_list, Searchingform=Searchingform, form=form)
 
+@app.route('/product/<int:id>', methods=['GET', 'POST'])
+def product(id):
 
+    form=itemform()
+
+    if request.method == 'POST' and form.validate_on_submit():
+        syrups_dict = {}
+        productdict={}
+        syrupdict={}
+        db = shelve.open('syrup.db', 'r')
+        syrups_dict = db['Syrups']
+
+        syrup=syrups_dict.get(id)
+        theid=syrup.get_id()
+        count=-1
+        if current_cart == []:
+            name=syrup.get_name()
+            price=syrup.get_price()
+            Quantity=form.quantity.data
+            syrupdict["Name"]=name
+            syrupdict["Price"]=price
+            syrupdict["Quantity"]=Quantity
+            productdict[syrup.get_id()] = syrupdict
+            current_cart.append(productdict)
+
+        else:
+            for i in current_cart:
+                count+=1
+
+                keys = i.keys()
+
+                for key in keys:
+                    key=key
+
+                if theid == key:
+
+                    existing=current_cart[count][key]['Quantity']
+                    new=int(form.quantity.data)
+                    final=int(existing)+int(new)
+                    current_cart[count][key]['Quantity']=final
+                    productdict={}
+                    break
+
+                elif theid != key:
+
+                    name=syrup.get_name()
+                    price=syrup.get_price()
+                    Quantity=form.quantity.data
+                    syrupdict["Name"]=name
+                    syrupdict["Price"]=price
+                    syrupdict["Quantity"]=Quantity
+                    productdict[syrup.get_id()] = syrupdict
+
+
+            if productdict != {}:
+                current_cart.append(productdict)
+
+
+        return redirect (url_for('Order_Medication'))
+
+    return render_template('Product_Medication.html', form=form)
+
+@app.route('/Cart')
+def retrieve_cart():
+    form=orderform()
+    cart=[]
+    if  request.method == 'POST' and form.validate_on_submit():
+        recname=form.name.data
+        address=form.address.data
+        current_cart.append(recname)
+        current_cart.append(address)
+        Order_dict = {}
+        db = shelve.open('Order', 'c')
+        try:
+            if 'Orders' in db:
+                Order_dict = db['Orders']
+            else:
+                db['Orders'] = Order_dict
+        except:
+            print('Error, database for medication cannot be retrieved')
+
+        db['receiptid']=current_cart
+
+
+
+        return render_template('Cart.html', cart=cart, form=form)
+
+    items=current_cart
+    for i in items:
+
+        keys = i.keys()
+        for key in keys:
+
+            i[key]['id']=key
+
+            cart.append(i[key])
+
+    countoflist=len(cart)
+    print(current_cart)
+    return render_template('Cart.html', cart=cart, count=countoflist, form=form)
+
+@app.route('/Update_Quantity/<int:id>/', methods=['GET', 'POST'])
+def Update_Quantity(id):
+    Update_form = itemform()
+    if request.method == 'POST' and Update_form.validate_on_submit():
+        items=current_cart
+        count=-1
+        for i in items:
+            count+=1
+            if id in i:
+                break
+        new=Update_form.quantity.data
+
+        items[count][id]['Quantity']=new
+
+        return redirect (url_for('retrieve_cart'))
+    return render_template('Update_Quantity.html', form=Update_form)
+
+@app.route('/delete_items/<int:id>', methods=['POST'])
+def delete_items(id):
+    count = 0
+    for item in current_cart:
+        for key in item:
+            if key == id:
+                del current_cart[count]
+                count += 1
+                break
+            else:
+                count += 1
+
+    return redirect(url_for('retrieve_cart'))
 
 @app.route('/UpdatingSyrups/<int:id>/', methods=['GET', 'POST'])
 def update_Syrup(id):
