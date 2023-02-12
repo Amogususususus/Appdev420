@@ -705,6 +705,13 @@ def logout():
     session.pop('NRIC', None)
     return redirect(url_for('home'))
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('error404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    return render_template('error500.html'), 500
 ###############This is where Benson's code ends###################################
 
 ####################This is where Isaac's code begins#######################################
@@ -1253,10 +1260,7 @@ def delete_feedback(id):
     return redirect(url_for('retrieve_feedback'))
 
 
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('error404.html'), 404
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
 ###############This is where Jai's code ends###################################
