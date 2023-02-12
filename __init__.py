@@ -795,7 +795,9 @@ def retrieve_appointments():
     for key in appointments_dict:
         appointment = appointments_dict.get(key)
         if appointment.get_nric_ment() == session['NRIC']: #check if the appointment is made by the user
-            if appointment.get_meeting_status_ment() != 'Over':
+           # if appointment.get_meeting_status_ment() == 'Notify':
+
+            if appointment.get_meeting_status_ment() != 'Over' and appointment.get_meeting_status_ment() != 'Notify':
                 if appointment.get_date_ment().strftime("%Y-%m-%d") > today.strftime("%Y-%m-%d") or appointment.get_date_ment().strftime("%Y-%m-%d") == today.strftime("%Y-%m-%d"):
                     appointments_list.append(appointment)
 
@@ -856,18 +858,84 @@ def update_appointment(id):
 
         return render_template('updateAppointment.html', form=update_appointment_form)
 
-@app.route('/deleteAppointment/<int:id>', methods=['POST'])
-def delete_appointment(id):
+@app.route('/retrieveMissedAppointments')
+def retrieve_missed_appointments():
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
+
     appointments_dict = {}
-    db = shelve.open('appointment.db', 'w')
-    appointments_dict = db['Appointments']
+    db = shelve.open('appointment.db', 'r')
+    try:
+        if 'Appointments' in db:
+            appointments_dict = db['Appointments']
+        else:
+            db['Appointments'] = appointments_dict
+    except:
+        print('Error')
 
-    appointments_dict.pop(id)
+    appointments_list = []
+    for key in appointments_dict:
+        appointment = appointments_dict.get(key)
+        if appointment.get_nric_ment() == session['NRIC']: #check if the appointment is made by the user
+            if appointment.get_attendance_ment() == 'Unattended':
+                appointments_list.append(appointment)
 
-    db['Appointments'] = appointments_dict
-    db.close()
+    return render_template('retrieveMissedAppointments.html', count=len(appointments_list), appointments_list=appointments_list)
 
-    return redirect(url_for('retrieve_appointments'))
+@app.route('/rescheduleAppointment/<int:id>/', methods=['GET', 'POST'])
+def reschedule_appointment(id):
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
+
+    update_appointment_form = updateAppointmentForm(request.form)
+    if request.method == 'POST' and update_appointment_form.validate():
+        appointments_dict = {}
+        db = shelve.open('appointment.db', 'w')
+        appointments_dict = db['Appointments']
+
+        appointment = appointments_dict.get(id)
+        appointment.set_name_ment(update_appointment_form.name_ment.data)
+        appointment.set_age_ment(update_appointment_form.age_ment.data)
+        appointment.set_gender_ment(update_appointment_form.gender_ment.data)
+        appointment.set_nric_ment(update_appointment_form.nric_ment.data)
+        appointment.set_email_ment(update_appointment_form.email_ment.data)
+        appointment.set_address_ment(update_appointment_form.address_ment.data)
+        appointment.set_remarks_ment(update_appointment_form.remarks_ment.data)
+        appointment.set_past_condition_ment(update_appointment_form.past_condition_ment.data)
+        appointment.set_doctor_ment(update_appointment_form.doctor_ment.data)
+        appointment.set_date_ment(update_appointment_form.date_ment.data)
+        appointment.set_time_ment(update_appointment_form.time_ment.data)
+        appointment.set_attendance_ment(update_appointment_form.attendance_ment.data)
+        appointment.set_meeting_status_ment(update_appointment_form.meeting_status_ment.data)
+
+        db['Appointments'] = appointments_dict
+
+        db.close()
+
+        return redirect(url_for('retrieve_appointments'))
+    else:
+        appointments_dict = {}
+        db = shelve.open('appointment.db', 'r')
+        appointments_dict = db['Appointments']
+
+        db.close()
+
+        appointment = appointments_dict.get(id)
+        update_appointment_form.name_ment.data = appointment.get_name_ment()
+        update_appointment_form.age_ment.data = appointment.get_age_ment()
+        update_appointment_form.gender_ment.data = appointment.get_gender_ment()
+        update_appointment_form.nric_ment.data = appointment.get_nric_ment()
+        update_appointment_form.email_ment.data = appointment.get_email_ment()
+        update_appointment_form.address_ment.data = appointment.get_address_ment()
+        update_appointment_form.remarks_ment.data = appointment.get_remarks_ment()
+        update_appointment_form.past_condition_ment.data = appointment.get_past_condition_ment()
+        update_appointment_form.doctor_ment.data = appointment.get_doctor_ment()
+        update_appointment_form.date_ment.data = appointment.get_date_ment()
+        update_appointment_form.time_ment.data = appointment.get_time_ment()
+        update_appointment_form.attendance_ment.data = appointment.get_attendance_ment()
+        update_appointment_form.meeting_status_ment.data = appointment.get_meeting_status_ment()
+
+        return render_template('rescheduleAppointment.html', form=update_appointment_form)
 
 # ADMIN SIDE
 @app.route('/Admin_Homepage')
@@ -1073,7 +1141,7 @@ def notify_patient(id):
     appointments_dict = db['Appointments']
 
     appointment = appointments_dict.get(id)
-    appointment.set_attendance_ment('Attended')
+    appointment.set_meeting_status_ment('Notify')
 
     db['Appointments'] = appointments_dict
     db.close()

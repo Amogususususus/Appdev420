@@ -95,8 +95,8 @@
                     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#myModal_{{appointment.get_id()}}">End Session</button>
 
                     <!-- Modal -->
-                    <div class="modal" id="myModal_{{appointment.get_id()}}">
-                        <div class="modal-dialog">
+                    <div class="modal fade" id="myModal_{{appointment.get_id()}}">
+                        <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
 
                                 <!-- Modal Header -->
@@ -112,8 +112,7 @@
 
                                 <!-- Modal Footer -->
                                 <div class="modal-footer">
-                                    <input type="submit" value="End" class="btn btn-danger">
-                                    <input type="submit" value="Prescibe Medication" class="btn btn-info">
+                                    <input type="submit" value="End Session" class="btn btn-danger">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                 </div>
                             </div>

@@ -27,7 +27,7 @@ class AppointmentForm(Form):
                                                                                      ('7pm', '1900'),
                                                                                      ('8pm', '2000'), ], default='')
     attendance_ment = SelectField('Attendance', [validators.DataRequired()], choices=[('Attended', 'Attended'), ('Unattended', 'Unattended')], default='Attended')
-    meeting_status_ment = SelectField('Meeting Status', [validators.DataRequired()], choices=[('Open', 'Open'), ('Closed', 'Closed'), ('Over', 'Over')], default='Closed')
+    meeting_status_ment = SelectField('Meeting Status', [validators.DataRequired()], choices=[('Open', 'Open'), ('Closed', 'Closed'), ('Over', 'Over'), ('Notify', 'Notify')], default='Closed')
 
     def validate_name_ment(form, field):
         for c in field.data:
@@ -87,7 +87,7 @@ class updateAppointmentForm(Form):
     address_ment = TextAreaField('Address', [validators.length(min=5, max=200), validators.DataRequired()], render_kw={'readonly':True})
     remarks_ment = TextAreaField('Remarks', [validators.length(min=3, max=120), validators.Optional()])
     past_condition_ment = TextAreaField('Pre-Existing Medical Conditions', [validators.Optional()], render_kw={'readonly':True})
-    doctor_ment = SelectField('Doctor', [validators.DataRequired()], choices=[('', 'Select'), ('Dr. Ong', 'Dr. Ong'), ('Dr. Lim', 'Dr. Lim')], default='')
+    doctor_ment = StringField('Doctor', [validators.DataRequired()], render_kw={'readonly':True})
     date_ment = DateField('Date of Appointment', format='%Y-%m-%d')
     time_ment = SelectField('Time (in hours)', [validators.DataRequired()], choices=[('', 'Select'),
                                                                                      ('9am', '0900'),
@@ -103,7 +103,7 @@ class updateAppointmentForm(Form):
                                                                                      ('7pm', '1900'),
                                                                                      ('8pm', '2000'), ], default='')
     attendance_ment = SelectField('Attendance', [validators.DataRequired()], choices=[('Attended', 'Attended'), ('Unattended', 'Unattended')], default='Attended')
-    meeting_status_ment = SelectField('Meeting Status', [validators.DataRequired()], choices=[('Open', 'Open'), ('Closed', 'Closed'), ('Over', 'Over')], default='Closed')
+    meeting_status_ment = SelectField('Meeting Status', [validators.DataRequired()], choices=[('Open', 'Open'), ('Closed', 'Closed'), ('Over', 'Over'), ('Notify', 'Notify')], default='Closed')
 
     def validate_name_ment(form, field):
         for c in field.data:

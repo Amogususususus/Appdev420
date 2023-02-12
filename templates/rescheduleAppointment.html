@@ -1,5 +1,5 @@
 {% extends "user_index.html" %}
-{% block title %}Book An Appointment{% endblock %}
+{% block title %}Reschedule Appointment{% endblock %}
 
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
@@ -22,7 +22,7 @@
 <br>
 <div class="mentdiv bg-light">
 
-  <h1 class="display-4">Book An Appointment</h1>
+  <h1 class="display-4">Reschedule Appointment</h1>
 
   <form action="" method="POST">
     <div class="form-group">
@@ -58,7 +58,8 @@
     <div class="form-group">
       {{ render_field(form.time_ment, class="form-control") }}
     </div>
-    <input type="submit" value="Book" class="btn btn-success"/>
+    <button style="float:right;"  onclick="history.back()" class="btn btn-secondary">Go Back</button>
+    <input type="submit" value="Reschedule" class="btn btn-info"/>
   </form>
 </div>
 {% endblock %}
