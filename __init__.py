@@ -339,16 +339,17 @@ def product(id):
 
     return render_template('Product_Medication.html', form=form)
 
-@app.route('/Cart')
+@app.route('/Cart', methods=['GET', 'POST'])
 def retrieve_cart():
     form=orderform()
     cart=[]
-    if  request.method == 'POST' and form.validate_on_submit():
+    if  request.method == 'POST':
         recname=form.name.data
         address=form.address.data
         current_cart.append(recname)
         current_cart.append(address)
         Order_dict = {}
+
         db = shelve.open('Order', 'c')
         try:
             if 'Orders' in db:
@@ -358,25 +359,34 @@ def retrieve_cart():
         except:
             print('Error, database for medication cannot be retrieved')
 
-        db['receiptid']=current_cart
+        Order_list = []
+        for key in Order_dict:
+            Order = Order_dict.get(key)
+            Order_list.append(Order)
 
+        if len(Order_dict) == 0:
+            id=len(Order_dict)
 
+        else:
+            last_object = len(Order_list)
+            id=last_object
+        Order_dict[id] = current_cart
+        print(Order_dict)
+        db['Orders'] = Order_dict
 
-        return render_template('Cart.html', cart=cart, form=form)
+        current_cart.clear()
+        return redirect (url_for('Order_Medication'))
 
-    items=current_cart
-    for i in items:
+    else:
+        items=current_cart
+        for i in items:
+            keys = i.keys()
+            for key in keys:
+                i[key]['id']=key
+                cart.append(i[key])
 
-        keys = i.keys()
-        for key in keys:
-
-            i[key]['id']=key
-
-            cart.append(i[key])
-
-    countoflist=len(cart)
-    print(current_cart)
-    return render_template('Cart.html', cart=cart, count=countoflist, form=form)
+        countoflist=len(cart)
+        return render_template('Cart.html', cart=cart, count=countoflist, form=form)
 
 @app.route('/Update_Quantity/<int:id>/', methods=['GET', 'POST'])
 def Update_Quantity(id):
@@ -408,6 +418,25 @@ def delete_items(id):
                 count += 1
 
     return redirect(url_for('retrieve_cart'))
+
+@app.route('/Order_Requests', methods=['GET', 'POST'])
+def Order_Requests():
+    Order_dict={}
+    db = shelve.open('Order', 'c')
+    try:
+        if 'Orders' in db:
+            Order_dict = db['Orders']
+        else:
+            db['Orders'] = Order_dict
+    except:
+        print('Error, database for medication cannot be retrieved')
+
+    Order_list=[]
+    for key in Order_dict:
+        Order=Order_dict.get(key)
+        Order_list.append(Order)
+
+    return render_template('Order_Requests.html', Order_list=Order_list)
 
 @app.route('/UpdatingSyrups/<int:id>/', methods=['GET', 'POST'])
 def update_Syrup(id):
@@ -534,7 +563,6 @@ def create_customer():
             customers_dict = db['Customers']
         except:
             print("Error in retrieving Customers from customer.db.")
-
         customer = Customer.Customer(create_customer_form.name.data,
                                      create_customer_form.gender.data,
                                      create_customer_form.membership.data,
