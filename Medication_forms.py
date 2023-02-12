@@ -23,7 +23,7 @@ class SearchForm(FlaskForm):
     submit=SubmitField(label=('Search'))
 
 class Adding_Stock_Form(FlaskForm):
-    Addition_Value = IntegerField("enter the amount you are adding")
+    Addition_Value = IntegerField(label=('Enter the amount of Stock you are adding'))
     submit = SubmitField("Add")
 
 class UploadFileForm(FlaskForm):

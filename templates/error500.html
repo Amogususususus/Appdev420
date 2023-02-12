@@ -1,0 +1,20 @@
+{% block head %}
+<!-- Google font -->
+<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,900" rel="stylesheet">
+<!-- Custom stylesheet -->
+<link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+{% endblock %}
+{% block navbar %}{% endblock %}
+{% block content %}
+<div id="notfound">
+		<div class="notfound">
+			<div class="notfound-404">
+				<h1>5<span></span>0</h1>
+			</div>
+			<h2>Oops! We can't find what you're looking for.</h2>
+			<p>The page either does not exist, has been removed, or is temporarily unavailable.</p>
+			<a href="{{url_for('User_Homepage')}}">Back to homepage</a>
+		</div>
+	</div>
+{% endblock %}
+{% block scripts %}{% endblock %}
