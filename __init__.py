@@ -105,6 +105,8 @@ def home():
 
 @app.route('/User_Homepage')
 def User_Homepage():
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
 
     return render_template('User_Homepage.html')
 @app.route('/findoutmore')
