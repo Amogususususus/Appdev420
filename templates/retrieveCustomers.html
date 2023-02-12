@@ -2,11 +2,11 @@
 {% block title %}View Accounts{% endblock %}
 
 {% block content %}
-
-
-          <br>
-		  <br>          <br>
-		  <br>          <br>
+<br>
+<br>
+<br>
+<br>
+<br>
 
 <head>
     <meta charset="utf-8">
@@ -17,16 +17,21 @@
     a:hover { text-decoration: none; color:black;}
     a:active { text-decoration: none; }
     a {color:black;}
+
+    h1 {text-align: center}
+
+    p {text-align: center; font-size: 19px;}
     </style>
 </head>
 
 <div>
+  <h1 class="display-4">All Accounts</h1>
   {% if count == 0 %}
-  <p>There are no accounts.</p>
+  <p>There are no accounts</p>
   {% elif count == 1 %}
-  <p>There is 1 account.</p>
+  <p>There is 1 account</p>
   {% else %}
-  <p>There are {{ count }} accounts.</p>
+  <p>There are {{ count }} accounts</p>
   {% endif %}
 </div>
 <div>
@@ -42,7 +47,7 @@
         <th>Password</th>
         <th>Address</th>
         <th>Age</th>
-        <th>Pre-existing Medical<br> Conditions</th>
+        <th>Conditions</th>
         <th></th>
         <th></th>
       </tr>

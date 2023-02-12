@@ -36,12 +36,11 @@ class CreateCustomerForm(Form):
             raise ValidationError('Name cannot contain numbers')
 
 class LoginForm(Form):
-    email = EmailField('Email', [validators.Email(), validators.DataRequired()])
+    nric = StringField('NRIC', [validators.Length(max=9)])
     password = PasswordField('Password', [validators.Length(min=8, max=16), validators.DataRequired()])
 
-
     def validate_password(self,password):
-        email_password_list =[]
+        nric_password_list =[]
         customers_dict = {}
         db = shelve.open('customer.db', 'c')
 
@@ -52,17 +51,17 @@ class LoginForm(Form):
 
         for key in customers_dict:
             customer = customers_dict.get(key)
-            customer_pair = [customer.get_email(),customer.get_password()]
-            email_password_list.append(customer_pair)
+            customer_pair = [customer.get_nric(),customer.get_password()]
+            nric_password_list.append(customer_pair)
 
         id = None
-        for n in email_password_list:
-            if self.email.data == n[0]:
+        for n in nric_password_list:
+            if self.nric.data == n[0]:
                 id = n
 
         if id is not None:
             if self.password.data != id[1]:
-                raise ValidationError('Incorrect Email or Password')
+                raise ValidationError('Incorrect NRIC or Password')
 
 
 class ResetPasswordForm(Form):
