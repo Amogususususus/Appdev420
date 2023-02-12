@@ -5,7 +5,7 @@ from datetime import date
 class AppointmentForm(Form):
     name_ment = StringField('Name', [validators.Length(min=1, max=100), validators.DataRequired()])
     age_ment = IntegerField('Age', [validators.NumberRange(min=1, max=120), validators.DataRequired()])
-    gender_ment = SelectField('Gender', [validators.DataRequired()], choices=[('', 'Select'), ('M', 'Male'), ('F', 'Female')], default='')
+    gender_ment = SelectField('Gender', [validators.DataRequired()], choices=[('', 'Select'), ('Male', 'Male'), ('Female', 'Female')], default='')
     nric_ment = StringField('NRIC', [validators.Length(min=9, max=9), validators.DataRequired()])
     email_ment = EmailField('Email', [validators.Email(), validators.DataRequired()])
     address_ment = TextAreaField('Address', [validators.length(min=5, max=200), validators.DataRequired()])
@@ -81,7 +81,7 @@ class AppointmentForm(Form):
 class updateAppointmentForm(Form):
     name_ment = StringField('Name', [validators.Length(min=1, max=100), validators.DataRequired()], render_kw={'readonly':True})
     age_ment = IntegerField('Age', [validators.NumberRange(min=1, max=120), validators.DataRequired()], render_kw={'readonly':True})
-    gender_ment = SelectField('Gender', [validators.DataRequired()], choices=[('', 'Select'), ('M', 'Male'), ('F', 'Female')], default='', render_kw={'readonly':True})
+    gender_ment = StringField('Gender', [validators.DataRequired()], render_kw={'readonly':True})
     nric_ment = StringField('NRIC', [validators.Length(min=9, max=9), validators.DataRequired()], render_kw={'readonly':True})
     email_ment = EmailField('Email', [validators.Email(), validators.DataRequired()], render_kw={'readonly':True})
     address_ment = TextAreaField('Address', [validators.length(min=5, max=200), validators.DataRequired()], render_kw={'readonly':True})

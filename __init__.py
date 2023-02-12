@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask_session import Session
 from werkzeug.utils import secure_filename
 import os
 from Medication_forms import CreateSyrupForm, SearchForm, UploadFileForm, Adding_Stock_Form, FilterForm, itemform, orderform
@@ -13,6 +14,11 @@ from Syrup import *
 from datetime import date
 
 app = Flask(__name__)
+
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
+
 app.secret_key = "123789123803ghj127891237831asd27891237892qwe3423423434234423234"
 
 app.config['SECRET_KEY'] = 'supersecretkey'
@@ -95,8 +101,8 @@ def SearchFunction(searchItem):
 
 @app.route('/')
 def home():
-
     return render_template('home.html')
+
 @app.route('/User_Homepage')
 def User_Homepage():
 
@@ -108,6 +114,12 @@ def findoutmore():
 
 @app.route('/Upload_Files/<int:id>/' ,methods=['GET','POST'])
 def Upload_Files(id):
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
+
+    if session["NRIC"] != 'ADMIN':
+        return render_template('error404.html'), 404
+
     form = UploadFileForm()
     if request.method == 'POST' and form.validate_on_submit():
         syrups_dict = {}
@@ -133,6 +145,12 @@ def Upload_Files(id):
 
 @app.route('/Medication_Management', methods=['GET', 'POST'])
 def create_Syrup():
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
+
+    if session["NRIC"] != 'ADMIN':
+        return render_template('error404.html'), 404
+
     Create_Syrup_form = CreateSyrupForm(request.form)
     if request.method == 'POST' and Create_Syrup_form.validate_on_submit():
         syrups_dict = {}
@@ -179,6 +197,11 @@ def create_Syrup():
 
 @app.route('/retrieveSyrup', methods=['GET', 'POST'])
 def retrieve_Syrup():
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
+
+    if session["NRIC"] != 'ADMIN':
+        return render_template('error404.html'), 404
 
     Searchingform = SearchForm()
     form = FilterForm()
@@ -234,6 +257,11 @@ def retrieve_Syrup():
 
 @app.route('/Order_Medication', methods=['GET', 'POST'])
 def Order_Medication():
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
+
+    if session["NRIC"] != 'ADMIN':
+        return render_template('error404.html'), 404
 
     Searchingform = SearchForm()
     form = FilterForm()
@@ -279,6 +307,11 @@ def Order_Medication():
 
 @app.route('/product/<int:id>', methods=['GET', 'POST'])
 def product(id):
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
+
+    if session["NRIC"] != 'ADMIN':
+        return render_template('error404.html'), 404
 
     form=itemform()
 
@@ -341,6 +374,12 @@ def product(id):
 
 @app.route('/Cart')
 def retrieve_cart():
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
+
+    if session["NRIC"] != 'ADMIN':
+        return render_template('error404.html'), 404
+
     form=orderform()
     cart=[]
     if  request.method == 'POST' and form.validate_on_submit():
@@ -380,6 +419,12 @@ def retrieve_cart():
 
 @app.route('/Update_Quantity/<int:id>/', methods=['GET', 'POST'])
 def Update_Quantity(id):
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
+
+    if session["NRIC"] != 'ADMIN':
+        return render_template('error404.html'), 404
+
     Update_form = itemform()
     if request.method == 'POST' and Update_form.validate_on_submit():
         items=current_cart
@@ -411,6 +456,12 @@ def delete_items(id):
 
 @app.route('/UpdatingSyrups/<int:id>/', methods=['GET', 'POST'])
 def update_Syrup(id):
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
+
+    if session["NRIC"] != 'ADMIN':
+        return render_template('error404.html'), 404
+
     Update_Syrup_form = CreateSyrupForm(request.form)
     if request.method == 'POST' and Update_Syrup_form.validate():
         syrups_dict = {}
@@ -448,6 +499,12 @@ def update_Syrup(id):
 
 @app.route('/Add_Stock/<int:id>/' ,methods=['GET','POST'])
 def Add_Stock(id):
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
+
+    if session["NRIC"] != 'ADMIN':
+        return render_template('error404.html'), 404
+
     form = Adding_Stock_Form()
     if request.method == 'POST' and form.validate_on_submit():
         syrups_dict = {}
@@ -509,15 +566,13 @@ def login():
         except:
             print("Error in retrieving Customers from customer.db.")
 
-
-
-        if login_form.email.data == "admin@mail.com" and login_form.password.data == "Iloveappdev":
-            session["Admin"] = login_form.email.data
+        if login_form.nric.data == "ADMIN" and login_form.password.data == "Iloveappdev":
+            session["NRIC"] = 'ADMIN'
             return redirect(url_for('retrieve_appointments_admin'))
         else:
             for key in customers_dict:
-                if login_form.email.data == customers_dict[key].get_email():
-                    session['NRIC'] = customers_dict[key].get_nric()
+                if login_form.nric.data == customers_dict[key].get_nric():
+                    session["NRIC"] = customers_dict[key].get_nric()
                     session.pop('Admin',None)
                     return redirect(url_for('User_Homepage')) #change home to booking form
 
@@ -560,6 +615,12 @@ def create_customer():
 
 @app.route('/retrieveCustomers')
 def retrieve_customers():
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
+
+    if session["NRIC"] != 'ADMIN':
+        return render_template('error404.html'), 404
+
     customers_dict = {}
     db = shelve.open('customer.db', 'r')
     try:
@@ -579,6 +640,9 @@ def retrieve_customers():
 
 @app.route('/updateCustomer/<int:id>/', methods=['GET', 'POST'])
 def update_customer(id):
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
+
     update_customer_form = CreateCustomerForm(request.form)
     if request.method == 'POST' and update_customer_form.validate():
         customers_dict = {}
@@ -636,8 +700,8 @@ def delete_customer(id):
 
 @app.route('/logout')
 def logout():
-    session.clear()
-    return redirect(url_for('login'))
+    session.pop('NRIC', None)
+    return redirect(url_for('home'))
 
 ###############This is where Benson's code ends###################################
 
@@ -647,6 +711,9 @@ def logout():
 today = date.today()
 @app.route('/createAppointment', methods=['GET', 'POST'])
 def create_appointment():
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
+
     create_appointment_form = AppointmentForm(request.form)
     if request.method == 'POST' and create_appointment_form.validate():
         appointments_dict = {}
@@ -709,6 +776,9 @@ def create_appointment():
 
 @app.route('/retrieveAppointments')
 def retrieve_appointments():
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
+
     appointments_dict = {}
     db = shelve.open('appointment.db', 'r')
     try:
@@ -722,14 +792,18 @@ def retrieve_appointments():
     appointments_list = []
     for key in appointments_dict:
         appointment = appointments_dict.get(key)
-        if appointment.get_meeting_status_ment() != 'Over':
-            if appointment.get_date_ment().strftime("%Y-%m-%d") > today.strftime("%Y-%m-%d") or appointment.get_date_ment().strftime("%Y-%m-%d") == today.strftime("%Y-%m-%d"):
-                appointments_list.append(appointment)
+        if appointment.get_nric_ment() == session['NRIC']: #check if the appointment is made by the user
+            if appointment.get_meeting_status_ment() != 'Over':
+                if appointment.get_date_ment().strftime("%Y-%m-%d") > today.strftime("%Y-%m-%d") or appointment.get_date_ment().strftime("%Y-%m-%d") == today.strftime("%Y-%m-%d"):
+                    appointments_list.append(appointment)
 
     return render_template('retrieveAppointments.html', count=len(appointments_list), appointments_list=appointments_list)
 
 @app.route('/updateAppointment/<int:id>/', methods=['GET', 'POST'])
 def update_appointment(id):
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
+
     update_appointment_form = updateAppointmentForm(request.form)
     if request.method == 'POST' and update_appointment_form.validate():
         appointments_dict = {}
@@ -796,6 +870,12 @@ def delete_appointment(id):
 # ADMIN SIDE
 @app.route('/Admin_Homepage')
 def retrieve_appointments_admin():
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
+
+    if session["NRIC"] != 'ADMIN':
+        return render_template('error404.html'), 404
+
     appointments_dict = {}
     db = shelve.open('appointment.db', 'r')
     try:
@@ -817,6 +897,12 @@ def retrieve_appointments_admin():
 
 @app.route('/updateAppointmentAdmin/<int:id>/', methods=['GET', 'POST'])
 def update_appointment_admin(id):
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
+
+    if session["NRIC"] != 'ADMIN':
+        return render_template('error404.html'), 404
+
     update_appointment_admin_form = updateAppointmentForm(request.form)
     if request.method == 'POST' and update_appointment_admin_form.validate():
         appointments_dict = {}
@@ -898,6 +984,12 @@ def delete_appointment_admin(id):
 
 @app.route('/retrievePastAppointmentsAdmin')
 def retrieve_past_appointments_admin():
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
+
+    if session["NRIC"] != 'ADMIN':
+        return render_template('error404.html'), 404
+
     appointments_dict = {}
     db = shelve.open('appointment.db', 'r')
     try:
@@ -947,6 +1039,12 @@ def change_to_attended(id):
 
 @app.route('/retrieveUnattendedAppointmentsAdmin')
 def retrieve_unattended_appointments_admin():
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
+
+    if session["NRIC"] != 'ADMIN':
+        return render_template('error404.html'), 404
+
     appointments_dict = {}
     db = shelve.open('appointment.db', 'r')
     try:
@@ -985,6 +1083,9 @@ def notify_patient(id):
 
 @app.route('/createFeedback', methods=['GET', 'POST'])
 def create_feedback():
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
+
     create_feedback_form = CreateFeedbackForm(request.form)
     if request.method == 'POST' and create_feedback_form.validate():
         feedback_dict = {}
@@ -1007,6 +1108,12 @@ def create_feedback():
 
 @app.route('/retrieveFeedback')
 def retrieve_feedback():
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
+
+    if session["NRIC"] != 'ADMIN':
+        return render_template('error404.html'), 404
+
     feedback_dict = {}
     db = shelve.open('feedback.db', 'r')
     feedback_dict = db['Feedbacks']
@@ -1023,6 +1130,9 @@ def retrieve_feedback():
 
 @app.route('/updateFeedback/<int:id>/', methods=['GET', 'POST'])
 def update_feedback(id):
+    if 'NRIC' not in session:
+        return redirect(url_for('login'))
+
     update_feedback_form = CreateFeedbackForm(request.form)
     if request.method == 'POST' and update_feedback_form.validate():
         feedback_dict = {}
