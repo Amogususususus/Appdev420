@@ -4,6 +4,9 @@
 {% block content %}
 <br>
 <br>
+<br>
+<br>
+<br>
 
 <head>
     <meta charset="utf-8">
@@ -14,10 +17,24 @@
     a:hover { text-decoration: none; color:black;}
     a:active { text-decoration: none; }
     a {color:black;}
+
+    h1 {text-align: center}
+
+    p {text-align: center; font-size: 19px;}
     </style>
 </head>
 
-<h1 class="display-4">Retrieve Feedback</h1>
+<div>
+  <h1 class="display-4">All Feeback</h1>
+  {% if count == 0 %}
+  <p>There are no feedbacks</p>
+  {% elif count == 1 %}
+  <p>There is 1 feedback</p>
+  {% else %}
+  <p>There are {{ count }} feedbacks</p>
+  {% endif %}
+</div>
+<br>
 <div>
   <table class="table table-hover" style="border: solid black;">
     <thead class="bg-dark text-white" style="width:100%;">

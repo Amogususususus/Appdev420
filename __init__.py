@@ -834,6 +834,19 @@ def retrieve_unattended_appointments_admin():
 
     return render_template('retrieveUnattendedAppointmentsAdmin.html', count=len(appointments_list), appointments_list=appointments_list)
 
+@app.route('/notifyPatient/<int:id>', methods=['POST'])
+def notify_patient(id):
+    appointments_dict = {}
+    db = shelve.open('appointment.db', 'w')
+    appointments_dict = db['Appointments']
+
+    appointment = appointments_dict.get(id)
+    appointment.set_attendance_ment('Attended')
+
+    db['Appointments'] = appointments_dict
+    db.close()
+
+    return redirect(url_for('retrieve_unattended_appointments_admin'))
 ###############This is where Isaac's code ends###################################
 
 ####################This is where Jai's code begins#######################################
