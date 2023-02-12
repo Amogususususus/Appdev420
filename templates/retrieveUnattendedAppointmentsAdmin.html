@@ -52,7 +52,6 @@
             <th>Doctor</th>
             <th>Date</th>
             <th>Time</th>
-            <th></th>
         </tr>
         </thead>
 
@@ -71,12 +70,6 @@
             <td>{{ appointment.get_doctor_ment() }}</td>
             <td>{{ appointment.get_date_ment() }}</td>
             <td>{{ appointment.get_time_ment() }}</td>
-
-            <td>
-                <form action="{{url_for('notify_patient', id=appointment.get_id())}}" method="POST">
-                    <input type="submit" value="Notify Patient" class="btn btn-primary">
-                </form>
-            </td>
         </tr>
         {% endfor %}
         </tbody>
