@@ -20,14 +20,20 @@
         </li>
         <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Our Services
+          Appointment
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#">Primary Care</a>
-          <a class="dropdown-item" href="#">Pediatrics</a>
-          <a class="dropdown-item" href="#">Dermatology</a>
-          <a class="dropdown-item" href="#">Nutrition</a>
-          <a class="dropdown-item" href="#"><div class="c-list">Sexual Health</div></a>
+          <a class="dropdown-item" href="/createAppointment">Book Appointment</a>
+          <a class="dropdown-item" href="/retrieveAppointments">Upcoming Appointments</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Feedback
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="/createFeedback">Feedback</a>
+          <a class="dropdown-item" href="/updateFeedback/1">Edit Feedback</a>
         </div>
       </li>
       <li>
@@ -36,15 +42,9 @@
           <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form>
       </li>
-
     </ul>
-
-      <button type="button" class="btn btn-outline-success" style="text-decoration:none;"><a href="/retrieveAppointments">View Appointments</a></button>
-      <div class="pr-2"></div>
-      <button type="button" class="btn btn-outline-success" style="text-decoration:none;"><a href="/createAppointment">Make an Appointment</a></button>
-      <div class="pr-2"></div>
-      <button type="button" class="btn btn-outline-success" style="text-decoration:none;"><a href="/createFeedback">Feedback</a></button>
-      <div class="pr-2"></div>
-      <button type="button" class="btn btn-outline-success" style="text-decoration:none;"><a href="/updateFeedback/1">Edit Feedback</a></button>
     </div>
+  <div class="pr-2"></div>
+        <button type="button" class="btn btn-outline-success"><a href="/logout">Logout</a></button>
+   </div>
   </nav>

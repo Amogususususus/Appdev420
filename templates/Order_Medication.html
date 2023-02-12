@@ -44,16 +44,37 @@
     color: white;
     transition:0.2s ease-in-out;
     }
+    .back {
+  background-color: grey;
+  color: white;
+  padding: 5px 10px;
+  padding-bottom:0px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius:4px;
+  margin-left:30px;
+  height:40px;
+  transition:0.2s ease-in-out;
+    }
+    .back:hover {
+    color:white;
+    transition:0.2s ease-in-out;
+    background-color: #545454;
+    }
 .overflowbug{
 height:300px;
 width:450px;
 overflow:scroll;
 }
-.Buttonstyledelete{
-border:3px solid #efc3bf;
+.Buttonstylecart{
+border:3px solid #00ab41;
   transition:0.2s ease-in-out;
   background-color: transparent;
-  color: red;
+  color: #00ab41;
   padding: 5px 10px;
   text-align: center;
   text-decoration: none;
@@ -66,12 +87,13 @@ border:3px solid #efc3bf;
   height:40px;
 }
 
-.Buttonstyledelete:hover{
-border:3px solid red;
-background-color: red;
+.Buttonstylecart:hover{
+border:3px solid #00ab41;
+background-color: #00ab41;
 color: white;
 transition:0.2s ease-in-out;
 }
+
 #myBtn {
   display: none;
   position: fixed;
@@ -92,6 +114,22 @@ transition:0.2s ease-in-out;
     color: #00bcd4;
     transition:0.2s ease-in-out;
 }
+.cart {
+  position: fixed;
+  bottom: 20px;
+  left: 30px;
+  z-index: 99;
+  outline: none;
+  color: #efc3bf;
+  text-decoration: none;
+  cursor: pointer;
+  transition:0.2s ease-in-out;
+  border-radius:4px;
+  animation: fadeIn 1.2s;
+}
+.cart:hover {
+    color: #00bcd4;
+}
 @keyframes fadeIn {
   0% { opacity: 0; }
   100% { opacity: 1; }
@@ -108,9 +146,10 @@ transition:0.2s ease-in-out;
 		  <br>
           <br>
           <br>
+<a href="/Cart" title="Check Cart" class="bi bi-bag-fill fa-4x cart"></a>
 <i onclick="topFunction()" id="myBtn" title="Go to top" class="bi bi-arrow-up-square-fill fa-3x"></i>
 <div style="text-align:center;">
-<h1 class="display-4">Edit Medication</h1>
+<h1 class="display-4">Order Medication</h1>
 <div class="flexing">
 <form method="post" class="form-inline mt-2 mt-md-0">
     <div class="container">
@@ -123,24 +162,14 @@ transition:0.2s ease-in-out;
       <input type="submit" value="Search" name="submit" class="Buttonstyle" style="margin-left:10px;">
       </div>
       <div class="col-sm  my-auto" style="padding-left:0px;padding-right:0px;">
-      <a href="{{url_for('retrieve_Syrup')}}" class="Buttonstyle" style="display:inline;margin-left:10px;">Return</a>
+      <a href="{{url_for('Order_Medication')}}" class="Buttonstyle" style="display:inline;margin-left:10px;">Return</a>
               </div>
   </div>
     </div>
     </form>
 </div>
 <br>
-<div class="flexing">
-    <div class="dropdown">
-<form method="post" class="form-inline mt-2 mt-md-0">
-    {{ form.hidden_tag()}}
-<div class="pr-2 pl-2 formStyle">
-    {{ form.Filter(class="input-group-text bg-transparent") }}
-</div>
-      <input type="submit" value="Sort" name="submit" class="Buttonstyle">
-</form>
-        </div>
-</div>
+
 </div>
           <br>
 {% if syrups_list %}
@@ -172,9 +201,9 @@ transition:0.2s ease-in-out;
 </a>
             </div>
 
-<button type="button" class="Buttonstyledelete" data-bs-toggle="modal" data-bs-target="#TheModal_{{syrup.get_id()}}" style="float:right;">
-  Delete
-</button>
+                  <a href="/product/{{syrup.get_id()}}" class=" Buttonstyle" style="float:right;">
+  Add to Cart
+        </a>
 
             <!--view modal-->
             <div class='modal fade' id='ViewModal_{{syrup.get_id()}}' tabindex='-1' aria-hidden='true'>
@@ -195,11 +224,6 @@ transition:0.2s ease-in-out;
     <h5 style="color:red;" class="fit">Stock: {{ syrup.get_stock() }}</h5>
     {%endif%}
 
-                       <a href="/Add_Stock/{{syrup.get_id()}}" class="Buttonstyle">
-
-  Add Stock
-
-        </a>
 
                             <h5>Size : {{syrup.get_Volume()}}</h5>
 
@@ -209,11 +233,8 @@ transition:0.2s ease-in-out;
                         <br>
 
 
-                  <a href="/UpdatingSyrups/{{syrup.get_id()}}" class=" Buttonstyle" style="float:right;">
-  Update Values
-        </a>
-                                  <a href="/Upload_Files/{{syrup.get_id()}} " class="Buttonstyle" style="float:left;margin-left:0px;">
-  Add/Update Image
+                  <a href="/product/{{syrup.get_id()}}" class=" Buttonstyle" style="float:right;">
+  Add to Cart
         </a>
                     </div>
                 </div>
@@ -284,9 +305,9 @@ transition:0.2s ease-in-out;
 </a>
             </div>
 
-<button type="button" class="Buttonstyledelete" data-bs-toggle="modal" data-bs-target="#TheModal2_{{syrup.get_id()}}" style="float:right;">
-  Delete
-</button>
+                  <a href="/product/{{syrup.get_id()}}" class=" Buttonstyle" style="float:right;">
+  Add to Cart
+        </a>
 
             <!--view modal-->
             <div class='modal fade' id='ViewModal2_{{syrup.get_id()}}' tabindex='-1' aria-hidden='true'>
@@ -307,11 +328,6 @@ transition:0.2s ease-in-out;
     <h5 style="color:red;" class="fit">Stock: {{ syrup.get_stock() }}</h5>
     {%endif%}
 
-                       <a href="/Add_Stock/{{syrup.get_id()}}" class="Buttonstyle">
-
-  Add Stock
-
-        </a>
 
                             <h5>Size : {{syrup.get_Volume()}}</h5>
 
@@ -321,12 +337,10 @@ transition:0.2s ease-in-out;
                         <br>
 
 
-                  <a href="/UpdatingSyrups/{{syrup.get_id()}}" class="Buttonstyle" style="float:right;">
-  Update Values
+                  <a href="/product/{{syrup.get_id()}}" class=" Buttonstyle" style="float:right;">
+  Add to Cart
         </a>
-                                  <a href="/Upload_Files/{{syrup.get_id()}}" class="Buttonstyle" style="float:left;margin-left:0px;">
-  Add/Update Image
-        </a>
+
                     </div>
                 </div>
             </div>
@@ -367,121 +381,9 @@ transition:0.2s ease-in-out;
 
 {% endif %}
 
-{% if SortedFinalList %}
-<div style="text-align:center;font-weight: bold;font-size: 30px;">Showing Results for All Medications</div>
-<div style="text-align:center;font-size: 25px;">
-{% if countforsortList == 0 %}
-<p>There are no Archived Medication.</p>
-{% else %}
-<p>There are {{ countforsortList }} Medications.</p>
-{% endif %}
-</div>
-
-<div class="flexing">
-    {% for syrup in SortedFinalList %}
-<div class="cards">
-<img src="{{ url_for('static', filename='uploads/'+syrup.get_Picture())}}" style="width:300px; height:220px;">
-    <div class="container1">
-      <h4>Name: {{ syrup.get_name() }}</h4>
-        <h5>Price: {{ syrup.get_price() }}$</h5>
-        {% if syrup.get_stock() > 30 %}
-    <h5>Stock: {{ syrup.get_stock() }}</h5>
-    {%elif syrup.get_stock() <= 30 %}
-    <h5 style="color:red;">Stock: {{ syrup.get_stock() }}</h5>
-    {%endif%}
-        <form action="{{url_for('delete_syrup', id=syrup.get_id())}}" method="POST">
-            <div style="padding-top:38px;">
-            <a href="#" class='text-decoration-none btn btn-primary' data-bs-toggle='modal' data-bs-target='#ViewModalforSorted_{{syrup.get_id()}}' style="width:33%;float:left;">
-                            View Details
-</a>
-            </div>
-
-<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#TheModalforSorted_{{syrup.get_id()}}" style="float:right;">
-  Delete
-</button>
-
-            <!--view modal-->
-            <div class='modal fade' id='ViewModalforSorted_{{syrup.get_id()}}' tabindex='-1' aria-hidden='true'>
-            <div class='modal-dialog'>
-                <div class='modal-content' style="border: #00bcd4 5px solid;">
-                    <div class="modal-body" style="background-color:#ECECEC;">
-
-                            <h3 class='card-title'>Product Details:</h3>
-
-                        <img src="{{ url_for('static', filename='uploads/'+syrup.get_Picture())}}" style="width:300px; height:220px;">
-                        <br>
-                            <h5>Name : {{syrup.get_name()}}</h5>
-                            <h5>Price : {{syrup.get_price()}}$</h5>
-
-                                    {% if syrup.get_stock() > 30 %}
-    <h5 class="fit">Stock: {{ syrup.get_stock() }}</h5>
-    {%elif syrup.get_stock() <= 30 %}
-    <h5 style="color:red;" class="fit">Stock: {{ syrup.get_stock() }}</h5>
-    {%endif%}
-
-                       <a href="/Add_Stock/{{syrup.get_id()}}" class="Buttonstyle">
-
-  Add Stock
-
-        </a>
-
-                            <h5>Size : {{syrup.get_Volume()}}</h5>
-
-                            <h5>Expiry date : {{syrup.get_Expiry()}}</h5>
-
-                            <h5>Description :</h5> <div class="overflowbug" style="  text-align: justify; ">{{syrup.get_Description()}}</div>
-                        <br>
-
-
-                  <a href="/UpdatingSyrups/{{syrup.get_id()}}" class="Buttonstyle" style="float:right;">
-  Update Values
-        </a>
-                                  <a href="/Upload_Files/{{syrup.get_id()}}" class="Buttonstyle" style="float:left;margin-left:0px;">
-  Add/Update Image
-        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-                <!-- The Modal -->
-<div class="modal" id="TheModalforSorted_{{syrup.get_id()}}">
-  <div class="modal-dialog">
-    <div class="modal-content">
-
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h4 class="modal-title">Delete Confirmation</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-
-      <!-- Modal body -->
-      <div class="modal-body">
-        Are you sure you want to delete {{syrup.get_name()}}?
-      </div>
-
-      <!-- Modal footer -->
-      <div class="modal-footer">
-        <input type="submit" value="Delete" class="btn btn-danger">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-</form>
-    </div>
-</div>
-
-    {% endfor %}
-</div>
-{% endif %}
-
 <br>
 <br><br><br><br><br><br><br>
 
-<a href="Medication_Management"><button type="button" class="btn btn-primary">Add Medication</button></a>
 <script>
 
 let mybutton = document.getElementById("myBtn");

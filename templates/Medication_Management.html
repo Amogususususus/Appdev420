@@ -10,22 +10,24 @@
           <br>
           <br>
 <div style="text-align:center;">
-<div class="cards7 bg-light" style="height:790px; width:60%;">
+        <h1 style="text-align:center;">Adding Medication</h1>
+    <br>
+<div class="cards7 bg-light" style="height:900px; width:60%;">
         <form method="POST" >
             {{form.hidden_tag()}}
-            <label > {{ form.Medication_name.label }}</label>
+             {{ form.Medication_name.label }}
      {%with messages = get_flashed_messages('', 'NameAlreadyExistError')%}
            {%if form.Medication_name.errors or messages%}
     {%if messages%}
   <div class="form-group">
-    {{ form.Medication_name (class="form-control | my-1 | border-danger") }}
+    {{ form.Medication_name (class="form-control | my-1 | border-danger | mb-0") }}
   </div>
       {%for message in messages%}
             <span class='text-danger | float-end'>{{message}}</span>
             {%endfor%}
             {%else%}
             <div class="form-group">
-            {{ form.Medication_name (class="form-control | my-1 ") }}
+            {{ form.Medication_name (class="form-control | my-1| mb-0") }}
             </div>
             {%endif%}
     {%for errors in form.Medication_name.errors%}
@@ -35,7 +37,7 @@
         {%endfor%}
           {%else%}
                  <div class="form-group">
-                 {{form.Medication_name(class='form-control')}}
+                 {{form.Medication_name(class='form-control | my-1| mb-0')}}
                  </div>
                 {%endif%}
               {%endwith%}
@@ -45,16 +47,16 @@
 
             {%if form.Price_Medication.errors%}
                 <div class="form-group">
-                    <label > {{ form.Price_Medication.label }}</label>
-                    {{form.Price_Medication(class='form-control | my-2 | border-danger')}}
+ {{ form.Price_Medication.label }}
+                    {{form.Price_Medication(class='form-control | my-2 | border-danger| mb-0')}}
                 </div>
             {%for errors in form.Price_Medication.errors%}
 <span class='text-danger | float-end'>{{errors}}</span>
             {%endfor%}
             {%else%}
                 <div class="form-group">
-        <label > {{ form.Price_Medication.label }}</label>
-                    {{form.Price_Medication(class='form-control | my-2')}}
+         {{ form.Price_Medication.label }}
+                    {{form.Price_Medication(class='form-control | my-2| mb-0')}}
                 </div>
             {%endif%}
 
@@ -63,23 +65,23 @@
 
                {%if form.Stock_Medication.errors%}
                 <div class="form-group">
-                    <label > {{ form.Stock_Medication.label }}</label>
-                    {{form.Stock_Medication(class='form-control | my-2 | border-danger')}}
+                     {{ form.Stock_Medication.label }}
+                    {{form.Stock_Medication(class='form-control | my-2 | border-danger| mb-0')}}
                 </div>
             {%for errors in form.Stock_Medication.errors%}
 <span class='text-danger | float-end'>{{errors}}</span>
             {%endfor%}
             {%else%}
                 <div class="form-group">
-        <label > {{ form.Stock_Medication.label }}</label>
-                    {{form.Stock_Medication(class='form-control | my-2')}}
+         {{ form.Stock_Medication.label }}
+                    {{form.Stock_Medication(class='form-control | my-2| mb-0')}}
                 </div>
             {%endif%}
 
 
       <div class="form-group">
-          <label > {{ form.Size.label }}</label>
-      {{ form.Size (class="form-control | my-2 ")}}
+           {{ form.Size.label }}
+      {{ form.Size (class="form-control | my-2| mb-0")}}
     </div>
 
          <div class="form-group">
@@ -87,8 +89,8 @@
   </div>
 
       <div class="form-group">
-          <label > {{ form.Description_Medication.label }}</label>
-          <textarea class="form-control mr-sm-2" placeholder="Enter Description..." aria-label="Search" style="resize:vertical;max-height:180px;height:150px;" name="Description_Medication">{{ Update_Syrup_form.Description_Medication.data }}</textarea>
+           {{ form.Description_Medication.label }}
+      {{ form.Description_Medication (class="form-control | my-2| mb-0" , rows='10',cols='10', style="max-height:395px;")}}
     </div>
 
               <div class="form-group" style="float:right;">
