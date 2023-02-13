@@ -1,7 +1,7 @@
 Member Roles:
 Benson: User Account Management, Register, Login, Error Validation for Error404, Error505, Home Page
 Isaac: Appointment Management
-Helun: Product Management
+Helun: Product Management, Medication CRUD, File Upload, cart system, order request/receipt system, sort function, search function
 Jai: Feedback Management
 
 LOGIN DETAILS:
