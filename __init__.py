@@ -488,6 +488,7 @@ def Update_Quantity(id):
 
 
         syrup=syrups_dict.get(id)
+        print(current_cart)
         old=current_cart[0][id]['Quantity']
         stock=syrup.get_stock()
         x = new - old
@@ -1394,4 +1395,4 @@ def delete_feedback(id):
 ###############This is where Jai's code ends###################################
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

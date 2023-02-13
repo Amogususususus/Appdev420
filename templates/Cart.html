@@ -108,7 +108,7 @@ transition:0.2s ease-in-out;
 		  <br>
           <br>
           <br>
-<i onclick="topFunction()" id="myBtn" title="Go to top" class="bi bi-arrow-up-square-fill fa-3x"></i>
+
 
 <br>
 
@@ -154,9 +154,13 @@ transition:0.2s ease-in-out;
 <br><br>
 
 <h1 style="text-align:center;">There is Nothing in this cart.</h1>
-
+<br>
+<br><br><br>
+<br><br><br>
+<br><br>
+    <a href="/Order_Medication" class="btn btn-secondary">Go Back</a>
 {% elif count!= 0%}
-
+<br><br>
 <form method="POST">
           <div class="form-group">
            {{ form.name.label }}
@@ -167,42 +171,24 @@ transition:0.2s ease-in-out;
                         {{ form.address.label }}
       {{ form.address (class="form-control | my-2| mb-0")}}
   </div>
-
+    <br>
+    <h1>Total Price: {{ sum }} SGD</h1>
+    <br>
+<div>
               <div class="form-group" style="float:right;">
             {{ form.submit(class="btn btn-success")}}
         </div>
 
-            <div style="width:770px;">
+            <div style="width:1345px;">
      <input type="reset" value="Reset" class="btn btn-danger" style="float:right;"/>
 </div>
-
+    <a href="/Order_Medication" class="btn btn-secondary">Go Back</a>
+</div>
 </form>
-<h1>Total Price:{{ sum }} SGD</h1>
-{% endif %}
 <br>
-<br><br><br><br>
-
-<a href="/Order_Medication" class="btn btn-secondary">Go Back</a>
-<script>
-
-let mybutton = document.getElementById("myBtn");
+{% endif %}
 
 
-window.onscroll = function() {scrollFunction()};
-
-function scrollFunction() {
-  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-    mybutton.style.display = "block";
-    mybutton.style.animation = "fadeIn 1.2s";
-  } else {
-    mybutton.style.display = "none";
-  }
-}
 
 
-function topFunction() {
-  document.body.scrollTop = 0;
-  document.documentElement.scrollTop = 0;
-}
-</script>
 {% endblock %}

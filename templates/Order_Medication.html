@@ -188,7 +188,7 @@ transition:0.2s ease-in-out;
 <img src="{{ url_for('static', filename='uploads/'+syrup.get_Picture())}}" style="width:300px; height:220px;">
     <div class="container1">
       <h4>Name: {{ syrup.get_name() }}</h4>
-        <h5>Price: {{ syrup.get_price() }}$</h5>
+        <h5>Price: {{ syrup.get_price() }} SGD</h5>
         {% if syrup.get_stock() > 30 %}
     <h5>Stock: {{ syrup.get_stock() }}</h5>
     {%elif syrup.get_stock() <= 30 %}

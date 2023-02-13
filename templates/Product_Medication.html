@@ -11,31 +11,33 @@
     <meta charset="UTF-8">
     <title>Adding Medication Quantity</title>
 <div style="text-align:center;">
-<div class="cards7 bg-light" style="height:545px; width:60%;">
+<div class="cards7 bg-light" style="height:555px; width:60%;">
     <form method='POST' enctype='multipart/form-data' style="text-align:center;">
 
         {{form.hidden_tag()}}
-
-                    <label>{{ form.quantity.label }}</label>
+<div class="form-group">
+                   <h3>{{ form.quantity.label }}</h3>
          {{form.quantity(class="form-control | my-2 ") }}
+</div>
+        <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>        <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
 
-        {{form.submit()}}
+              <div class="form-group pt-3" style="float:right;">
+            {{ form.submit(class="btn btn-success")}}
+        </div>
     </form>
-              <br>
-          <br>
-          <br>
-		  <br>
-          <br>
-          <br>
-          <br>
-              <br>
-          <br>
-          <br>
-		  <br>
-          <br>
-          <br>
-          <br>
-
     <button onclick="history.back()" class="btn btn-secondary">Go Back</button>
     </div>
 </div>
