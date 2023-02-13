@@ -1,5 +1,5 @@
 Member Roles:
-Benson: User Account Management
+Benson: User Account Management, Register, Login, Error Validation for Error404, Error505, Home Page
 Isaac: Appointment Management
 Helun: Product Management
 Jai: Feedback Management
