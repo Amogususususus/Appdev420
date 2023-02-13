@@ -321,56 +321,79 @@ def product(id):
         syrups_dict = {}
         productdict={}
         syrupdict={}
-        db = shelve.open('syrup.db', 'r')
+        db = shelve.open('syrup.db')
         syrups_dict = db['Syrups']
-
         syrup=syrups_dict.get(id)
+        Subtract=syrup.get_stock()
+        Quantity=form.quantity.data
         theid=syrup.get_id()
         count=-1
-        if current_cart == []:
-            name=syrup.get_name()
-            price=syrup.get_price()
-            Quantity=form.quantity.data
-            syrupdict["Name"]=name
-            syrupdict["Price"]=price
-            syrupdict["Quantity"]=Quantity
-            productdict[syrup.get_id()] = syrupdict
-            current_cart.append(productdict)
-
+        if Quantity > Subtract:
+            return redirect(url_for('sorry_validate'))
         else:
-            for i in current_cart:
-                count+=1
-
-                keys = i.keys()
-
-                for key in keys:
-                    key=key
-
-                if theid == key:
-
-                    existing=current_cart[count][key]['Quantity']
-                    new=int(form.quantity.data)
-                    final=int(existing)+int(new)
-                    current_cart[count][key]['Quantity']=final
-                    productdict={}
-                    break
-
-                elif theid != key:
-
-                    name=syrup.get_name()
-                    price=syrup.get_price()
-                    Quantity=form.quantity.data
-                    syrupdict["Name"]=name
-                    syrupdict["Price"]=price
-                    syrupdict["Quantity"]=Quantity
-                    productdict[syrup.get_id()] = syrupdict
-
-
-            if productdict != {}:
+            if current_cart == []:
+                name=syrup.get_name()
+                price=syrup.get_price()
+                Quantity=form.quantity.data
+                Total=price*Quantity
+                syrupdict["Name"]=name
+                syrupdict["Price"]=price
+                syrupdict["Quantity"]=Quantity
+                syrupdict["Total"]=Total
+                productdict[syrup.get_id()] = syrupdict
                 current_cart.append(productdict)
+                Subtract=syrup.get_stock()
+                New_Value=Subtract-Quantity
+                syrup.set_stock(New_Value)
+
+                db['Syrups']=syrups_dict
+            else:
+                for i in current_cart:
+                    count+=1
+
+                    keys = i.keys()
+
+                    for key in keys:
+                        key=key
+
+                    if theid == key:
+
+                        existing=current_cart[count][key]['Quantity']
+                        new=int(form.quantity.data)
+                        final=int(existing)+int(new)
+                        current_cart[count][key]['Quantity']=final
+                        productdict={}
+
+                        Subtract=syrup.get_stock()
+
+                        New_Value=Subtract-new
+                        syrup.set_stock(New_Value)
+
+                        print(syrup.get_stock())
+                        db['Syrups']=syrups_dict
+                        break
+
+                    elif theid != key:
+
+                        name=syrup.get_name()
+                        price=syrup.get_price()
+                        Quantity=form.quantity.data
+                        Total=price*Quantity
+                        syrupdict["Name"]=name
+                        syrupdict["Price"]=price
+                        syrupdict["Quantity"]=Quantity
+                        syrupdict["Total"]=Total
+                        productdict[syrup.get_id()] = syrupdict
+                        Subtract=syrup.get_stock()
+                        New_Value=Subtract-Quantity
+                        syrup.set_stock(New_Value)
+
+                        db['Syrups']=syrups_dict
+                if productdict != {}:
+                    current_cart.append(productdict)
 
 
-        return redirect (url_for('Order_Medication'))
+            return redirect (url_for('Order_Medication'))
 
     return render_template('Product_Medication.html', form=form)
 
@@ -384,6 +407,7 @@ def retrieve_cart():
 
     form=orderform()
     cart=[]
+    summary=0
     if  request.method == 'POST':
         recname=form.name.data
         address=form.address.data
@@ -391,14 +415,15 @@ def retrieve_cart():
         current_cart.append(address)
         Order_dict = {}
 
-        db = shelve.open('Order', 'c')
+        dbOrder = shelve.open('Order', 'c')
         try:
-            if 'Orders' in db:
-                Order_dict = db['Orders']
+            if 'Orders' in dbOrder:
+                Order_dict = dbOrder['Orders']
             else:
-                db['Orders'] = Order_dict
+                dbOrder['Orders'] = Order_dict
         except:
             print('Error, database for medication cannot be retrieved')
+
 
         Order_list = []
         for key in Order_dict:
@@ -412,11 +437,12 @@ def retrieve_cart():
             last_object = len(Order_list)
             id=last_object
         Order_dict[id] = current_cart
-        print(Order_dict)
-        db['Orders'] = Order_dict
+        dbOrder['Orders'] = Order_dict
 
         current_cart.clear()
-        return redirect (url_for('Order_Medication'))
+
+
+        return redirect (url_for('Order_Requests'))
 
     else:
         items=current_cart
@@ -425,9 +451,11 @@ def retrieve_cart():
             for key in keys:
                 i[key]['id']=key
                 cart.append(i[key])
+                summary+=i[key]['Total']
+
 
         countoflist=len(cart)
-        return render_template('Cart.html', cart=cart, count=countoflist, form=form)
+        return render_template('Cart.html', cart=cart, count=countoflist, form=form, sum=summary)
 
 @app.route('/Update_Quantity/<int:id>/', methods=['GET', 'POST'])
 def Update_Quantity(id):
@@ -439,6 +467,16 @@ def Update_Quantity(id):
 
     Update_form = itemform()
     if request.method == 'POST' and Update_form.validate_on_submit():
+        syrups_dict = {}
+        db = shelve.open('syrup.db', 'w')
+        try:
+            if 'Syrups' in db:
+                syrups_dict = db['Syrups']
+            else:
+                db['Syrups'] = syrups_dict
+        except:
+            print('Error, database for medication cannot be retrieved')
+
         items=current_cart
         count=-1
         for i in items:
@@ -447,13 +485,38 @@ def Update_Quantity(id):
                 break
         new=Update_form.quantity.data
 
-        items[count][id]['Quantity']=new
 
+
+        syrup=syrups_dict.get(id)
+        old=current_cart[0][id]['Quantity']
+        stock=syrup.get_stock()
+        x = new - old
+        final=stock - x
+        syrup.set_stock(final)
+        db['Syrups'] = syrups_dict
+        items[count][id]['Quantity']=new
         return redirect (url_for('retrieve_cart'))
     return render_template('Update_Quantity.html', form=Update_form)
 
 @app.route('/delete_items/<int:id>', methods=['POST'])
 def delete_items(id):
+    syrups_dict = {}
+    db = shelve.open('syrup.db', 'w')
+    try:
+        if 'Syrups' in db:
+            syrups_dict = db['Syrups']
+        else:
+            db['Syrups'] = syrups_dict
+    except:
+        print('Error, database for medication cannot be retrieved')
+
+    syrup=syrups_dict.get(id)
+
+    Add=current_cart[0][id]['Quantity']
+    current=syrup.get_stock()
+    Final=current+Add
+    syrup.set_stock(Final)
+    db['Syrups'] = syrups_dict
     count = 0
     for item in current_cart:
         for key in item:
@@ -466,10 +529,47 @@ def delete_items(id):
 
     return redirect(url_for('retrieve_cart'))
 
-@app.route('/Order_Requests', methods=['GET', 'POST'])
+@app.route('/Order_Requests')
 def Order_Requests():
+    count=0
     Order_dict={}
-    db = shelve.open('Order', 'c')
+    items_list=[]
+    Final_items_list=[]
+    db = shelve.open('Order')
+    try:
+        if 'Orders' in db:
+            Order_dict = db['Orders']
+        else:
+            db['Orders'] = Order_dict
+    except:
+        print('Error, database for medication cannot be retrieved')
+    for k in range(0, len(Order_dict)):
+        items=Order_dict
+        c=items[k]
+        for i in range(0, len(c)-2):
+            item=c[i]
+            keys = item.keys()
+            for key in keys:
+                a=item[key]
+                a['id']=count
+                a['name']=c[len(c)-2]
+                a['address']=c[len(c)-1]
+
+                items_list.append(a)
+
+        count+=1
+        Final_items_list.append(items_list)
+
+        items_list=[]
+    return render_template('Order_Requests.html', items_list=Final_items_list)
+
+
+@app.route('/Delete_Order/<int:id>/', methods=['POST'])
+def Delete_Order(id):
+
+    Order_dict={}
+
+    db = shelve.open('Order')
     try:
         if 'Orders' in db:
             Order_dict = db['Orders']
@@ -478,12 +578,15 @@ def Order_Requests():
     except:
         print('Error, database for medication cannot be retrieved')
 
-    Order_list=[]
-    for key in Order_dict:
-        Order=Order_dict.get(key)
-        Order_list.append(Order)
+    Order_dict.pop(id)
+    db['Orders'] = Order_dict
 
-    return render_template('Order_Requests.html', Order_list=Order_list)
+    return redirect (url_for('Order_Requests'))
+
+@app.route('/Overflow_Validate')
+def sorry_validate():
+
+    return render_template('sorry.html')
 
 @app.route('/UpdatingSyrups/<int:id>/', methods=['GET', 'POST'])
 def update_Syrup(id):
@@ -572,6 +675,8 @@ def delete_syrup(id):
         print('Error, database for medication cannot be retrieved')
     syrups_dict.pop(id)
     db['Syrups'] = syrups_dict
+
+
 
     return redirect(url_for('retrieve_Syrup'))
 
