@@ -1,8 +1,14 @@
+Member Roles:
+Benson: User Account Management
+Isaac: Appointment Management
+Helun: Product Management
+Jai: Feedback Management
+
 LOGIN DETAILS:
 
 Login as User/Patient:
-NRIC: T1234567H
-Password: notpassss
+NRIC: S1234567A
+Password: 12345678
 
 Login as Admin/Doctor:
 NRIC: ADMIN
