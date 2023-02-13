@@ -2,7 +2,7 @@ Member Roles:
 Benson: User Account Management, Register, Login, Error Validation for Error404, Error505, Home Page
 Isaac: Appointment Management, Create Appointment, View/Update Upcoming Appointment, View/Reschedule Missed Appointments, View Past Appointments, View Unattended Appointments
 Helun: Product Management, Medication CRUD, File Upload, cart system, order request/receipt system, sort function, search function
-Jai: Feedback Management
+Jai: Feedback Management, Feedback Creation, Feedback Update, Unchangeable Current Date, Category of Feedback, Custom Validation Functions
 
 LOGIN DETAILS:
 
