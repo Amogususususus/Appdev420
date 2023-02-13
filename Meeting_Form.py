@@ -3,14 +3,14 @@ from wtforms.fields import EmailField, DateField
 from datetime import date
 
 class AppointmentForm(Form):
-    name_ment = StringField('Name', [validators.Length(min=1, max=100), validators.DataRequired()])
-    age_ment = IntegerField('Age', [validators.NumberRange(min=1, max=120), validators.DataRequired()])
-    gender_ment = SelectField('Gender', [validators.DataRequired()], choices=[('', 'Select'), ('Male', 'Male'), ('Female', 'Female')], default='')
-    nric_ment = StringField('NRIC', [validators.Length(min=9, max=9), validators.DataRequired()])
-    email_ment = EmailField('Email', [validators.Email(), validators.DataRequired()])
+    name_ment = StringField('Name', [validators.Length(min=1, max=100), validators.DataRequired()], render_kw={'readonly':True})
+    age_ment = IntegerField('Age', [validators.NumberRange(min=1, max=120), validators.DataRequired()], render_kw={'readonly':True})
+    gender_ment = StringField('Gender', [validators.DataRequired()], render_kw={'readonly':True})
+    nric_ment = StringField('NRIC', [validators.Length(min=9, max=9), validators.DataRequired()], render_kw={'readonly':True})
+    email_ment = EmailField('Email', [validators.Email(), validators.DataRequired()], render_kw={'readonly':True})
     address_ment = TextAreaField('Address', [validators.length(min=5, max=200), validators.DataRequired()])
-    remarks_ment = TextAreaField('Remarks', [validators.length(min=3, max=120), validators.Optional()])
-    past_condition_ment = TextAreaField('Pre-Existing Medical Conditions', [validators.Optional()])
+    remarks_ment = TextAreaField('Remarks', [validators.length(min=3, max=120), validators.DataRequired()])
+    past_condition_ment = TextAreaField('Pre-Existing Medical Conditions', [validators.DataRequired()], render_kw={'readonly':True})
     doctor_ment = SelectField('Doctor', [validators.DataRequired()], choices=[('', 'Select'), ('Dr. Ong', 'Dr. Ong'), ('Dr. Lim', 'Dr. Lim')], default='')
     date_ment = DateField('Date of Appointment', format='%Y-%m-%d')
     time_ment = SelectField('Time (in hours)', [validators.DataRequired()], choices=[('', 'Select'),
@@ -27,7 +27,7 @@ class AppointmentForm(Form):
                                                                                      ('7pm', '1900'),
                                                                                      ('8pm', '2000'), ], default='')
     attendance_ment = SelectField('Attendance', [validators.DataRequired()], choices=[('Attended', 'Attended'), ('Unattended', 'Unattended')], default='Attended')
-    meeting_status_ment = SelectField('Meeting Status', [validators.DataRequired()], choices=[('Open', 'Open'), ('Closed', 'Closed'), ('Over', 'Over'), ('Notify', 'Notify')], default='Closed')
+    meeting_status_ment = SelectField('Meeting Status', [validators.DataRequired()], choices=[('Open', 'Open'), ('Closed', 'Closed'), ('Over', 'Over')], default='Closed')
 
     def validate_name_ment(form, field):
         for c in field.data:
@@ -85,8 +85,8 @@ class updateAppointmentForm(Form):
     nric_ment = StringField('NRIC', [validators.Length(min=9, max=9), validators.DataRequired()], render_kw={'readonly':True})
     email_ment = EmailField('Email', [validators.Email(), validators.DataRequired()], render_kw={'readonly':True})
     address_ment = TextAreaField('Address', [validators.length(min=5, max=200), validators.DataRequired()], render_kw={'readonly':True})
-    remarks_ment = TextAreaField('Remarks', [validators.length(min=3, max=120), validators.Optional()])
-    past_condition_ment = TextAreaField('Pre-Existing Medical Conditions', [validators.Optional()], render_kw={'readonly':True})
+    remarks_ment = TextAreaField('Remarks', [validators.length(min=3, max=120), validators.DataRequired()])
+    past_condition_ment = TextAreaField('Pre-Existing Medical Conditions', [validators.DataRequired()], render_kw={'readonly':True})
     doctor_ment = StringField('Doctor', [validators.DataRequired()], render_kw={'readonly':True})
     date_ment = DateField('Date of Appointment', format='%Y-%m-%d')
     time_ment = SelectField('Time (in hours)', [validators.DataRequired()], choices=[('', 'Select'),
@@ -153,3 +153,6 @@ class updateAppointmentForm(Form):
 
         elif field.data.strftime("%Y-%m-%d") == today.strftime("%Y-%m-%d"):
             raise ValidationError('Select an appointment date that is not the current date.')
+
+class DoctorFilterForm(Form):
+    filterDoctor = SelectField('Doctor', [validators.DataRequired()], choices=[('All', 'Showing All Doctors'), ('Dr. Ong', 'Dr. Ong'), ('Dr. Lim', 'Dr. Lim')], default='All')

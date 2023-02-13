@@ -6,7 +6,7 @@ from Medication_forms import CreateSyrupForm, SearchForm, UploadFileForm, Adding
 import Customer
 import Syrup
 from Account_Form import *
-from Meeting_Form import AppointmentForm, updateAppointmentForm
+from Meeting_Form import AppointmentForm, updateAppointmentForm, DoctorFilterForm
 import Appointment
 from Forms2 import CreateFeedbackForm
 import shelve, Feedback
@@ -710,7 +710,6 @@ def update_customer(id):
         update_customer_form.nric.data = customer.get_nric()
 
 
-
         return render_template('updateCustomer.html', form=update_customer_form)
 
 @app.route('/deleteCustomer/<int:id>', methods=['POST'])
@@ -807,12 +806,44 @@ def create_appointment():
         db.close()
 
         return redirect(url_for('retrieve_appointments'))
-    return render_template('createAppointment.html', form=create_appointment_form)
+    else:
+        customers_dict = {}
+        db = shelve.open('customer.db', 'r')
+        customers_dict = db['Customers']
+
+        for key in customers_dict:
+            customer = customers_dict.get(key)
+            if customer.get_nric() == session['NRIC']: #check if the appointment is made by the user
+                create_appointment_form.name_ment.data = customer.get_name()
+                create_appointment_form.age_ment.data = customer.get_age()
+                create_appointment_form.gender_ment.data = customer.get_gender()
+                create_appointment_form.nric_ment.data = customer.get_nric()
+                create_appointment_form.email_ment.data = customer.get_email()
+                create_appointment_form.address_ment.data = customer.get_address()
+                create_appointment_form.past_condition_ment.data = customer.get_condition()
+
+        db.close()
+
+        return render_template('createAppointment.html', form=create_appointment_form)
 
 @app.route('/retrieveAppointments')
 def retrieve_appointments():
     if 'NRIC' not in session:
         return redirect(url_for('login'))
+
+    appointments_dict = {}
+    db = shelve.open('appointment.db', 'w')
+    appointments_dict = db['Appointments']
+
+    for key in appointments_dict:
+        appointment = appointments_dict.get(key)
+        if appointment.get_nric_ment() == session['NRIC']: #check if the appointment is made by the user
+            if appointment.get_date_ment().strftime("%Y-%m-%d") < today.strftime("%Y-%m-%d"):
+                appointment.set_attendance_ment('Unattended')
+                appointment.set_meeting_status_ment('Over')
+
+    db['Appointments'] = appointments_dict
+    db.close()
 
     appointments_dict = {}
     db = shelve.open('appointment.db', 'r')
@@ -828,11 +859,10 @@ def retrieve_appointments():
     for key in appointments_dict:
         appointment = appointments_dict.get(key)
         if appointment.get_nric_ment() == session['NRIC']: #check if the appointment is made by the user
-           # if appointment.get_meeting_status_ment() == 'Notify':
+            if appointment.get_meeting_status_ment() != 'Over':
+                appointments_list.append(appointment)
 
-            if appointment.get_meeting_status_ment() != 'Over' and appointment.get_meeting_status_ment() != 'Notify':
-                if appointment.get_date_ment().strftime("%Y-%m-%d") > today.strftime("%Y-%m-%d") or appointment.get_date_ment().strftime("%Y-%m-%d") == today.strftime("%Y-%m-%d"):
-                    appointments_list.append(appointment)
+    appointments_list = sorted(appointments_list, key=lambda x: x.get_date_ment())
 
     return render_template('retrieveAppointments.html', count=len(appointments_list), appointments_list=appointments_list)
 
@@ -897,6 +927,20 @@ def retrieve_missed_appointments():
         return redirect(url_for('login'))
 
     appointments_dict = {}
+    db = shelve.open('appointment.db', 'w')
+    appointments_dict = db['Appointments']
+
+    for key in appointments_dict:
+        appointment = appointments_dict.get(key)
+        if appointment.get_nric_ment() == session['NRIC']: #check if the appointment is made by the user
+            if appointment.get_date_ment().strftime("%Y-%m-%d") < today.strftime("%Y-%m-%d"):
+                appointment.set_attendance_ment('Unattended')
+                appointment.set_meeting_status_ment('Over')
+
+    db['Appointments'] = appointments_dict
+    db.close()
+
+    appointments_dict = {}
     db = shelve.open('appointment.db', 'r')
     try:
         if 'Appointments' in db:
@@ -912,6 +956,8 @@ def retrieve_missed_appointments():
         if appointment.get_nric_ment() == session['NRIC']: #check if the appointment is made by the user
             if appointment.get_attendance_ment() == 'Unattended':
                 appointments_list.append(appointment)
+
+    appointments_list = sorted(appointments_list, key=lambda x: x.get_date_ment(), reverse=True)
 
     return render_template('retrieveMissedAppointments.html', count=len(appointments_list), appointments_list=appointments_list)
 
@@ -971,13 +1017,26 @@ def reschedule_appointment(id):
         return render_template('rescheduleAppointment.html', form=update_appointment_form)
 
 # ADMIN SIDE
-@app.route('/Admin_Homepage')
+@app.route('/Admin_Homepage', methods=['GET', 'POST'])
 def retrieve_appointments_admin():
     if 'NRIC' not in session:
         return redirect(url_for('login'))
 
     if session["NRIC"] != 'ADMIN':
         return render_template('error404.html'), 404
+
+    appointments_dict = {}
+    db = shelve.open('appointment.db', 'w')
+    appointments_dict = db['Appointments']
+
+    for key in appointments_dict:
+        appointment = appointments_dict.get(key)
+        if appointment.get_date_ment().strftime("%Y-%m-%d") < today.strftime("%Y-%m-%d"):
+            appointment.set_attendance_ment('Unattended')
+            appointment.set_meeting_status_ment('Over')
+
+    db['Appointments'] = appointments_dict
+    db.close()
 
     appointments_dict = {}
     db = shelve.open('appointment.db', 'r')
@@ -989,14 +1048,26 @@ def retrieve_appointments_admin():
     except:
         print('Error')
 
+    doctor_filter_form = DoctorFilterForm(request.form)
     appointments_list = []
     for key in appointments_dict:
         appointment = appointments_dict.get(key)
         if appointment.get_meeting_status_ment() != 'Over':
-            if appointment.get_date_ment().strftime("%Y-%m-%d") > today.strftime("%Y-%m-%d") or appointment.get_date_ment().strftime("%Y-%m-%d") == today.strftime("%Y-%m-%d"):
+
+            #Filtering by doctor
+            if request.method == 'POST' and doctor_filter_form.validate():
+                if doctor_filter_form.filterDoctor.data == 'All':
+                    appointments_list.append(appointment)
+
+                elif doctor_filter_form.filterDoctor.data == appointment.get_doctor_ment():
+                    appointments_list.append(appointment)
+
+            else:
                 appointments_list.append(appointment)
 
-    return render_template('Admin_Homepage.html', count=len(appointments_list), appointments_list=appointments_list)
+    appointments_list = sorted(appointments_list, key=lambda x: x.get_date_ment())
+
+    return render_template('Admin_Homepage.html', form=doctor_filter_form, count=len(appointments_list), appointments_list=appointments_list)
 
 @app.route('/updateAppointmentAdmin/<int:id>/', methods=['GET', 'POST'])
 def update_appointment_admin(id):
@@ -1085,7 +1156,7 @@ def delete_appointment_admin(id):
 
     return redirect(url_for('retrieve_appointments_admin'))
 
-@app.route('/retrievePastAppointmentsAdmin')
+@app.route('/retrievePastAppointmentsAdmin', methods=['GET','POST'])
 def retrieve_past_appointments_admin():
     if 'NRIC' not in session:
         return redirect(url_for('login'))
@@ -1103,14 +1174,27 @@ def retrieve_past_appointments_admin():
     except:
         print('Error')
 
+    doctor_filter_form = DoctorFilterForm(request.form)
     appointments_list = []
     for key in appointments_dict:
         appointment = appointments_dict.get(key)
 
-        if appointment.get_date_ment().strftime("%Y-%m-%d") < today.strftime("%Y-%m-%d") or appointment.get_meeting_status_ment() == 'Over':
-            appointments_list.append(appointment)
+        if appointment.get_meeting_status_ment() == 'Over':
 
-    return render_template('retrievePastAppointmentsAdmin.html', count=len(appointments_list), appointments_list=appointments_list)
+            #Filtering by doctor
+            if request.method == 'POST' and doctor_filter_form.validate():
+                if doctor_filter_form.filterDoctor.data == 'All':
+                    appointments_list.append(appointment)
+
+                elif doctor_filter_form.filterDoctor.data == appointment.get_doctor_ment():
+                    appointments_list.append(appointment)
+
+            else:
+                appointments_list.append(appointment)
+
+    appointments_list = sorted(appointments_list, key=lambda x: x.get_date_ment(), reverse=True)
+
+    return render_template('retrievePastAppointmentsAdmin.html', form=doctor_filter_form, count=len(appointments_list), appointments_list=appointments_list)
 
 @app.route('/changeAttendanceToUnattended/<int:id>', methods=['POST'])
 def change_to_unattended(id):
@@ -1140,7 +1224,7 @@ def change_to_attended(id):
 
     return redirect(url_for('retrieve_past_appointments_admin'))
 
-@app.route('/retrieveUnattendedAppointmentsAdmin')
+@app.route('/retrieveUnattendedAppointmentsAdmin', methods=['GET', 'POST'])
 def retrieve_unattended_appointments_admin():
     if 'NRIC' not in session:
         return redirect(url_for('login'))
@@ -1158,28 +1242,27 @@ def retrieve_unattended_appointments_admin():
     except:
         print('Error')
 
+    doctor_filter_form = DoctorFilterForm(request.form)
     appointments_list = []
     for key in appointments_dict:
         appointment = appointments_dict.get(key)
 
         if appointment.get_attendance_ment() == 'Unattended':
-            appointments_list.append(appointment)
 
-    return render_template('retrieveUnattendedAppointmentsAdmin.html', count=len(appointments_list), appointments_list=appointments_list)
+            #Filtering by doctor
+            if request.method == 'POST' and doctor_filter_form.validate():
+                if doctor_filter_form.filterDoctor.data == 'All':
+                    appointments_list.append(appointment)
 
-@app.route('/notifyPatient/<int:id>', methods=['POST'])
-def notify_patient(id):
-    appointments_dict = {}
-    db = shelve.open('appointment.db', 'w')
-    appointments_dict = db['Appointments']
+                elif doctor_filter_form.filterDoctor.data == appointment.get_doctor_ment():
+                    appointments_list.append(appointment)
 
-    appointment = appointments_dict.get(id)
-    appointment.set_meeting_status_ment('Notify')
+            else:
+                appointments_list.append(appointment)
 
-    db['Appointments'] = appointments_dict
-    db.close()
+    appointments_list = sorted(appointments_list, key=lambda x: x.get_date_ment(), reverse=True)
 
-    return redirect(url_for('retrieve_unattended_appointments_admin'))
+    return render_template('retrieveUnattendedAppointmentsAdmin.html', form=doctor_filter_form, count=len(appointments_list), appointments_list=appointments_list)
 
 ###############This is where Isaac's code ends###################################
 

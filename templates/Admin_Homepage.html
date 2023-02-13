@@ -1,7 +1,8 @@
 {% extends "admin_index.html" %}
-{% block title %}All Upcoming Appointments{% endblock %}
+{% block title %}Upcoming Appointments{% endblock %}
 
 {% block content %}
+{% from "includes/_filterformHelper.html" import render_field %}
 <br>
 <br>
 <br>
@@ -22,23 +23,29 @@
 
     p {text-align: center; font-size: 19px;}
 
-    .sorter {text-align: center;}
-
-    form {font-size: 17px;}
+    .filterDiv {margin: auto; width: 10%; text-align: center;}
     </style>
 </head>
 
 <div>
   <h1 class="display-4">All Upcoming Appointments</h1>
   {% if count == 0 %}
-  <p>There are no upcoming appointments.</p>
+  <p>There are no upcoming appointments</p>
   {% elif count == 1 %}
-  <p>There is 1 upcoming appointment scheduled.</p>
+  <p>There is 1 upcoming appointment scheduled</p>
   {% else %}
-  <p>There are {{ count }} upcoming appointments scheduled.</p>
+  <p>There are {{ count }} upcoming appointments scheduled</p>
   {% endif %}
 </div>
-
+<div class="filterDiv">
+    <form action="" method="POST">
+        <div class="form-group">
+            {{ render_field(form.filterDoctor, class="form-control") }}
+        </div>
+        <input type="submit" value="Show" class="btn btn-outline-primary"/>
+    </form>
+</div>
+<br>
 {% if count != 0 %}
 <div>
     <table class="table table-hover" style="border: solid black;">
