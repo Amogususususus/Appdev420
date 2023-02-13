@@ -11,7 +11,7 @@ class AppointmentForm(Form):
     address_ment = TextAreaField('Address', [validators.length(min=5, max=200), validators.DataRequired()])
     remarks_ment = TextAreaField('Remarks', [validators.length(min=3, max=120), validators.DataRequired()])
     past_condition_ment = TextAreaField('Pre-Existing Medical Conditions', [validators.DataRequired()], render_kw={'readonly':True})
-    doctor_ment = SelectField('Doctor', [validators.DataRequired()], choices=[('', 'Select'), ('Dr. Ong', 'Dr. Ong'), ('Dr. Lim', 'Dr. Lim')], default='')
+    doctor_ment = SelectField('Doctor', [validators.DataRequired()], choices=[('', 'Select'), ('Dr. Ong', 'Dr. Ong'), ('Dr. Lim', 'Dr. Lim'), ('Dr. Tan', 'Dr. Tan'), ('Dr. Wong', 'Dr. Wong')], default='')
     date_ment = DateField('Date of Appointment', format='%Y-%m-%d')
     time_ment = SelectField('Time (in hours)', [validators.DataRequired()], choices=[('', 'Select'),
                                                                                      ('9am', '0900'),
@@ -146,7 +146,7 @@ class updateAppointmentForm(Form):
             if not (c.isalpha() or c.isdigit() or c == ',' or c == '.' or c == ' '):
                 raise ValidationError('Pre-Existing Medical Conditions cannot contain special characters.')
 
-    def validate_date_ment(form, field):
+    def validate_dat_ment(form, field):
         today = date.today()
         if field.data.strftime("%Y-%m-%d") < today.strftime("%Y-%m-%d"):
             raise ValidationError('Select an appointment date that is not in the past.')
@@ -155,4 +155,4 @@ class updateAppointmentForm(Form):
             raise ValidationError('Select an appointment date that is not the current date.')
 
 class DoctorFilterForm(Form):
-    filterDoctor = SelectField('Doctor', [validators.DataRequired()], choices=[('All', 'Showing All Doctors'), ('Dr. Ong', 'Dr. Ong'), ('Dr. Lim', 'Dr. Lim')], default='All')
+    filterDoctor = SelectField('Doctor', [validators.DataRequired()], choices=[('All', 'Showing All Doctors'), ('Dr. Ong', 'Dr. Ong'), ('Dr. Lim', 'Dr. Lim'), ('Dr. Tan', 'Dr. Tan'), ('Dr. Wong', 'Dr. Wong')], default='All')
