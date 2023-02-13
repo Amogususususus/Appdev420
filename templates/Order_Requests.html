@@ -1,5 +1,5 @@
 {% extends "admin_index.html" %}
-{% block title %}View Medications{% endblock %}
+{% block title %}View Orders{% endblock %}
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
 <head>
@@ -109,154 +109,90 @@ transition:0.2s ease-in-out;
           <br>
           <br>
 <i onclick="topFunction()" id="myBtn" title="Go to top" class="bi bi-arrow-up-square-fill fa-3x"></i>
-<div style="text-align:center;">
-<h1 class="display-4">Edit Medication</h1>
-<div class="flexing">
-<form method="post" class="form-inline mt-2 mt-md-0">
-    <div class="container">
-  <div class="row">
-{{Searchingform.hidden_tag()}}
-<div class="col" style="padding-left:0px;padding-right:0px;">
-{{ Searchingform.searched (class="form-control | my-1 ", style="width:45em;") }}
-</div>
-      <div class="col-sm  my-auto" style="padding-left:0px;padding-right:0px;">
-      <input type="submit" value="Search" name="submit" class="Buttonstyle" style="margin-left:10px;">
-      </div>
-      <div class="col-sm  my-auto" style="padding-left:0px;padding-right:0px;">
-      <a href="{{url_for('retrieve_Syrup')}}" class="Buttonstyle" style="display:inline;margin-left:10px;">Return</a>
-              </div>
-  </div>
-    </div>
-    </form>
-</div>
+
 <br>
-<div class="flexing">
-    <div class="dropdown">
-<form method="post" class="form-inline mt-2 mt-md-0">
-    {{ form.hidden_tag()}}
-<div class="pr-2 pl-2 formStyle">
-    {{ form.Filter(class="input-group-text bg-transparent") }}
-</div>
-      <input type="submit" value="Sort" name="submit" class="Buttonstyle">
-</form>
-        </div>
-</div>
-</div>
-          <br>
-{% if syrups_list %}
-<div style="text-align:center;font-weight: bold;font-size: 30px;">Showing Results for All Medications</div>
-<div style="text-align:center;font-size: 25px;">
-{% if count == 0 %}
-<p>There are no Archived Medication.</p>
-{% else %}
-<p>There are {{ count }} Medications.</p>
-{% endif %}
-</div>
 
-<div class="flexing">
-    {% for Order in Order_list %}
-<div class="cards">
-<img src="{{ url_for('static', filename='uploads/'+syrup.get_Picture())}}" style="width:300px; height:220px;">
-    <div class="container1">
-      <h4>Name: {{ syrup.get_name() }}</h4>
-        <h5>Price: {{ syrup.get_price() }}$</h5>
-        {% if syrup.get_stock() > 30 %}
-    <h5>Stock: {{ syrup.get_stock() }}</h5>
-    {%elif syrup.get_stock() <= 30 %}
-    <h5 style="color:red;">Stock: {{ syrup.get_stock() }}</h5>
-    {%endif%}
-        <form action="{{url_for('delete_syrup', id=syrup.get_id())}}" method="POST">
-            <div style="padding-top:38px;">
-            <a href="#" class='text-decoration-none Buttonstyle ' data-bs-toggle='modal' data-bs-target='#ViewModal_{{syrup.get_id()}}' style="width:33%;float:left;margin-left:0px;">
-                            View Details
-</a>
-            </div>
+  <table class="table table-hover" style="border: solid black;">
+    <thead class="bg-dark text-white">
+      <tr>
+        <td>Order ID</td>
+        <th>Name of Recipient</th>
+        <th>Address</th>
+                  <th>Name of Product</th>
+        <th>Quantity</th>
+                            <th>Total Price of Product</th>
+                                      <th></th>
+                                      <th></th>
 
-<button type="button" class="Buttonstyledelete" data-bs-toggle="modal" data-bs-target="#TheModal_{{syrup.get_id()}}" style="float:right;">
-  Delete
+      </tr>
+    </thead>
+    <tbody>
+
+
+
+      {% for item in items_list %}
+
+        {% for order in item %}
+
+        <tr>
+          <td>{{ order['id'] }}</td>
+            <td> {{ order['name'] }} </td>
+               <td>{{ order['address'] }}</td>
+                <td>{{ order['Name'] }}</td>
+                <td>{{order['Quantity']}}</td>
+                <td> {{order['Total']}} SGD</td>
+                                                                            <td></td>
+          <td>
+            <form action="{{url_for('Delete_Order', id=order['id'])}}" method="POST" >
+<button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#TheModal_{{order['id']}}">
+  Mark as Resolved
 </button>
-
-            <!--view modal-->
-            <div class='modal fade' id='ViewModal_{{syrup.get_id()}}' tabindex='-1' aria-hidden='true'>
-            <div class='modal-dialog'>
-                <div class='modal-content' style="border: #00bcd4 5px solid;">
-                    <div class="modal-body" style="background-color:#ECECEC;">
-
-                            <h3 class='card-title'>Product Details:</h3>
-
-                        <img src="{{ url_for('static', filename='uploads/'+syrup.get_Picture())}}" style="width:300px; height:220px;">
-                        <br>
-                            <h5>Name : {{syrup.get_name()}}</h5>
-                            <h5>Price : {{syrup.get_price()}}$</h5>
-
-                                    {% if syrup.get_stock() > 30 %}
-    <h5 class="fit">Stock: {{ syrup.get_stock() }}</h5>
-    {%elif syrup.get_stock() <= 30 %}
-    <h5 style="color:red;" class="fit">Stock: {{ syrup.get_stock() }}</h5>
-    {%endif%}
-
-                       <a href="/Add_Stock/{{syrup.get_id()}}" class="Buttonstyle">
-
-  Add Stock
-
-        </a>
-
-                            <h5>Size : {{syrup.get_Volume()}}</h5>
-
-                            <h5>Expiry date : {{syrup.get_Expiry()}}</h5>
-
-                            <h5>Description :</h5> <div class="overflowbug" style="  text-align: justify; ">{{syrup.get_Description()}}</div>
-                        <br>
-
-
-                  <a href="/UpdatingSyrups/{{syrup.get_id()}}" class=" Buttonstyle" style="float:right;">
-  Update Values
-        </a>
-                                  <a href="/Upload_Files/{{syrup.get_id()}} " class="Buttonstyle" style="float:left;margin-left:0px;">
-  Add/Update Image
-        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-                <!-- The Modal -->
-<div class="modal" id="TheModal_{{syrup.get_id()}}">
+<div class="modal" id="TheModal_{{order['id']}}">
   <div class="modal-dialog">
     <div class="modal-content">
 
       <!-- Modal Header -->
       <div class="modal-header">
-        <h4 class="modal-title">Delete Confirmation</h4>
+        <h4 class="modal-title">Resolve Confirmation</h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
       <!-- Modal body -->
       <div class="modal-body">
-        Are you sure you want to delete {{syrup.get_name()}}?
+        Are you sure you want to Mark {{order['id']}} as resolved?
       </div>
 
       <!-- Modal footer -->
       <div class="modal-footer">
-        <input type="submit" value="Delete" class="btn btn-danger">
+        <input type="submit" value="Resolve" class="btn btn-danger">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
       </div>
 
     </div>
   </div>
 </div>
+            </form>
+          </td>
+        </tr>
 
-</form>
-    </div>
-</div>
+      {% endfor %}
+      {% endfor %}
 
-    {% endfor %}
-</div>
+    </tbody>
+  </table>
+{% if count == 0 %}
+<br>
+<br><br>
+
+<h1 style="text-align:center;">There are no orders.</h1>
 {% endif %}
 
 
-<br><br><br><br><br><br><br><br><br><br><br><br><br>
-<a href="Medication_Management"><button type="button" class="btn btn-primary">Add Medication</button></a>
+
+<br>
+<br><br><br><br>
+
+<a href="/Order_Medication" class="btn btn-secondary">Go Back</a>
 <script>
 
 let mybutton = document.getElementById("myBtn");

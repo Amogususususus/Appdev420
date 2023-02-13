@@ -1,0 +1,21 @@
+
+{% block head %}
+<!-- Google font -->
+<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,900" rel="stylesheet">
+<!-- Custom stylesheet -->
+<link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+{% endblock %}
+{% block navbar %}{% endblock %}
+{% block content %}
+<div id="notfound">
+		<div class="notfound">
+			<div class="notfound-404">
+				<h1>4<span></span>4</h1>
+			</div>
+			<h2>The number you entered is over the Stock!</h2>
+			<p>please enter the valid amount in the quantity section</p>
+			<a href="{{url_for('retrieve_cart')}}">Back to cart</a>
+		</div>
+	</div>
+{% endblock %}
+{% block scripts %}{% endblock %}
