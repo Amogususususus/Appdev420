@@ -1,7 +1,7 @@
 Member Roles:
 Benson: User Account Management, Register, Login, Error Validation for Error404, Error505, Home Page
 Isaac: Appointment Management, Create Appointment, View/Update Upcoming Appointment, View/Reschedule Missed Appointments, View Past Appointments, View Unattended Appointments
-Helun: Product Management, Medication CRUD, File Upload, cart system, order request/receipt system, sort function, search function
+Helun: Product Management, Medication Crate, Read, Update Delete, File Upload, cart system(with create read update and delete), order request/receipt system(with create read and delete, sort function, search function, Validators for the forms used in Medications
 Jai: Feedback Management, Feedback Creation, Feedback Update, Unchangeable Current Date, Category of Feedback, Custom Validation Functions
 
 LOGIN DETAILS:
@@ -13,3 +13,30 @@ Password: 12345678
 Login as Admin/Doctor:
 NRIC: ADMIN
 Password: Iloveappdev
+
+Python Interpreters:
+Django	4.1.5	
+Flask	2.2.2	
+Flask-Reuploaded	1.3.0	
+Flask-Session	0.4.0	
+Flask-Uploads	0.2.1	
+Flask-WTF	1.1.1	
+Jinja2	3.1.2	
+MarkupSafe	2.1.1	
+WTForm	1.0	
+WTForms	3.0.1	
+Werkzeug	2.2.2	
+asgiref	3.6.0	
+cachelib	0.10.2	
+click	8.1.3	
+colorama	0.4.6	
+dnspython	2.2.1	
+email-validator	1.3.0	
+idna	3.4	
+itsdangerous	2.1.2	
+kwargs	1.0.1	
+pip	21.3.1	
+setuptools	60.2.0	
+sqlparse	0.4.3	
+tzdata	2022.7	
+wheel	0.37.1	
