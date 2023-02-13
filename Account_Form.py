@@ -6,16 +6,16 @@ import shelve
 class CreateUserForm(Form):
     first_name = StringField('First Name', [validators.Length(min=1, max=150), validators.DataRequired()])
     last_name = StringField('Last Name', [validators.Length(min=1, max=150), validators.DataRequired()])
-    gender = SelectField('Gender', [validators.DataRequired()], choices=[('', 'Select'), ('F', 'Female'), ('M', 'Male')], default='')
+    gender = SelectField('Gender', [validators.DataRequired()], choices=[('', 'Select'), ('Female', 'Female'), ('Male', 'Male')], default='')
     membership = RadioField('Membership', choices=[('F', 'Fellow'), ('S', 'Senior'), ('P', 'Professional')], default='F')
     condition = TextAreaField('Pre-existing Medical Conditions', [validators.Optional()])
 
 class CreateCustomerForm(Form):
     name = StringField('Name', [validators.Length(min=1, max=150), validators.DataRequired()])
-    gender = SelectField('Gender', [validators.DataRequired()], choices=[('', 'Select'), ('F', 'Female'), ('M', 'Male')], default='')
+    gender = SelectField('Gender', [validators.DataRequired()], choices=[('', 'Select'), ('Female', 'Female'), ('Male', 'Male')], default='')
     email = EmailField('Email', [validators.Email(), validators.DataRequired()])
     age = IntegerField('Age', [validators.NumberRange(min=1,max=120), validators.DataRequired()])
-    address = TextAreaField('Mailing Address', [validators.length(max=200), validators.DataRequired()])
+    address = TextAreaField('Address', [validators.length(max=200), validators.DataRequired()])
     membership = RadioField('Membership', choices=[('F', 'Fellow'), ('S', 'Senior'), ('P', 'Professional')], default='F')
     condition = TextAreaField('Pre-existing Medical Conditions (optional)', [validators.Optional()])
     password = StringField('Password', [validators.Length(min=8, max=16), validators.DataRequired()])
