@@ -27,7 +27,7 @@ class Adding_Stock_Form(FlaskForm):
     submit = SubmitField("Add")
 
 class UploadFileForm(FlaskForm):
-    file = FileField("File", validators=[FileRequired(), FileAllowed(['jpg', 'png', 'jpeg', 'gif', 'webp'], message='File Type Not Allowed!')], render_kw={'placeholder' : 'Enter File...'})
+    file = FileField("File", validators=[FileRequired(), FileAllowed(['jpg', 'png', 'jpeg', 'gif', 'webp', 'jfif', 'avif'], message='File Type Not Allowed!')], render_kw={'placeholder' : 'Enter File...'})
     submitting = SubmitField("Upload File")
 
 class CreateSyrupForm(FlaskForm):

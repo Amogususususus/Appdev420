@@ -115,24 +115,25 @@ transition:0.2s ease-in-out;
   <table class="table table-hover" style="border: solid black;">
     <thead class="bg-dark text-white">
       <tr>
-        <td>id</td>
+        <td>Product id</td>
         <th>Name</th>
         <th>Price</th>
         <th>Quantity</th>
+                            <th>Total Price of Product</th>
                   <th></th>
                   <th></th>
       </tr>
     </thead>
     <tbody>
 
-
-
+<h1>There are {{ count }} items in this Cart</h1>
     {% for item in cart %}
         <tr>
           <td>{{ item['id'] }}</td>
           <td>{{ item['Name'] }}</td>
-          <td>{{ item['Price'] }}</td>
+          <td>{{ item['Price'] }} SGD</td>
           <td>{{ item['Quantity'] }}</td>
+          <td>{{ item['Total'] }} SGD</td>
           <td><a href="/Update_Quantity/{{ item['id'] }}/" class="btn btn-warning">Change Quantity</a></td>
           <td>
             <form action="{{url_for('delete_items', id=item['id'])}}" method="POST">
@@ -153,7 +154,8 @@ transition:0.2s ease-in-out;
 <br><br>
 
 <h1 style="text-align:center;">There is Nothing in this cart.</h1>
-{% endif %}
+
+{% elif count!= 0%}
 
 <form method="POST">
           <div class="form-group">
@@ -175,7 +177,8 @@ transition:0.2s ease-in-out;
 </div>
 
 </form>
-
+<h1>Total Price:{{ sum }} SGD</h1>
+{% endif %}
 <br>
 <br><br><br><br>
 
