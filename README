@@ -1,6 +1,6 @@
 Member Roles:
 Benson: User Account Management, Register, Login, Error Validation for Error404, Error505, Home Page
-Isaac: Appointment Management
+Isaac: Appointment Management, Book Appointment, View/Update Appointment, View/Reschedule Missed Appointment, View Past Appointments, View Unattended Appointments
 Helun: Product Management
 Jai: Feedback Management
 
