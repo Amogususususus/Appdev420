@@ -738,9 +738,6 @@ def create_customer():
         customers_dict[customer.get_user_id()] = customer
         db['Customers'] = customers_dict
 
-
-
-
         db.close()
 
         return redirect(url_for('login'))
@@ -845,6 +842,7 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_server_error(error):
     return render_template('error500.html'), 500
+
 ###############This is where Benson's code ends###################################
 
 ####################This is where Isaac's code begins#######################################
@@ -1287,6 +1285,7 @@ def notify_patient(id):
     db.close()
 
     return redirect(url_for('retrieve_unattended_appointments_admin'))
+
 ###############This is where Isaac's code ends###################################
 
 ####################This is where Jai's code begins#######################################
@@ -1392,8 +1391,7 @@ def delete_feedback(id):
 
     return redirect(url_for('retrieve_feedback'))
 
-
+###############This is where Jai's code ends###################################
 
 if __name__ == '__main__':
     app.run()
-###############This is where Jai's code ends###################################
