@@ -369,7 +369,7 @@ def product(id):
                         New_Value=Subtract-new
                         syrup.set_stock(New_Value)
 
-                        print(syrup.get_stock())
+
                         db['Syrups']=syrups_dict
                         break
 
@@ -476,7 +476,7 @@ def Update_Quantity(id):
                 db['Syrups'] = syrups_dict
         except:
             print('Error, database for medication cannot be retrieved')
-
+        counter=0
         items=current_cart
         count=-1
         for i in items:
@@ -488,15 +488,20 @@ def Update_Quantity(id):
 
 
         syrup=syrups_dict.get(id)
-        print(current_cart)
-        old=current_cart[0][id]['Quantity']
-        stock=syrup.get_stock()
-        x = new - old
-        final=stock - x
-        syrup.set_stock(final)
-        db['Syrups'] = syrups_dict
-        items[count][id]['Quantity']=new
-        return redirect (url_for('retrieve_cart'))
+        for p in current_cart:
+
+            if id in p:
+
+                old=p[id]['Quantity']
+                stock=syrup.get_stock()
+                x = new - old
+                final=stock - x
+                syrup.set_stock(final)
+                db['Syrups'] = syrups_dict
+                current_cart[counter][id]['Quantity']=new
+                return redirect (url_for('retrieve_cart'))
+            else:
+                counter+=1
     return render_template('Update_Quantity.html', form=Update_form)
 
 @app.route('/delete_items/<int:id>', methods=['POST'])
@@ -513,22 +518,25 @@ def delete_items(id):
 
     syrup=syrups_dict.get(id)
 
-    Add=current_cart[0][id]['Quantity']
-    current=syrup.get_stock()
-    Final=current+Add
-    syrup.set_stock(Final)
-    db['Syrups'] = syrups_dict
-    count = 0
-    for item in current_cart:
-        for key in item:
-            if key == id:
-                del current_cart[count]
-                count += 1
-                break
-            else:
-                count += 1
+    for p in current_cart:
 
-    return redirect(url_for('retrieve_cart'))
+        if id in p:
+            Add=p[id]['Quantity']
+            current=syrup.get_stock()
+            Final=current+Add
+            syrup.set_stock(Final)
+            db['Syrups'] = syrups_dict
+            count = 0
+            for item in current_cart:
+                for key in item:
+                    if key == id:
+                        del current_cart[count]
+                        count += 1
+                        break
+                    else:
+                        count += 1
+
+            return redirect(url_for('retrieve_cart'))
 
 @app.route('/Order_Requests')
 def Order_Requests():
@@ -562,7 +570,7 @@ def Order_Requests():
         Final_items_list.append(items_list)
 
         items_list=[]
-    return render_template('Order_Requests.html', items_list=Final_items_list)
+    return render_template('Order_Requests.html', items_list=Final_items_list, count=count)
 
 
 @app.route('/Delete_Order/<int:id>/', methods=['POST'])
