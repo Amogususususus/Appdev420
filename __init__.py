@@ -1206,9 +1206,12 @@ def create_feedback():
 
         db.close()
 
-        return redirect(url_for('User_Homepage'))
+        return redirect(url_for('confirmpage'))
     return render_template('createFeedback.html', form=create_feedback_form)
 
+@app.route('/confirmFeedback')
+def confirmpage():
+    return render_template('confirmFeedback.html')
 
 @app.route('/retrieveFeedback')
 def retrieve_feedback():
